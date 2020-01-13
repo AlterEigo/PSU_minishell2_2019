@@ -28,17 +28,35 @@ void assign_color_pairs(void)
 void init_ncurse_stdscr(void)
 {
     initscr();
+    raw();
     noecho();
-    cbreak();
-    curs_set(FALSE);
+    curs_set(TRUE);
     keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
+    //nodelay(stdscr, TRUE);
 }
 
 int main(int argc, char *argv[])
 {
+    chtype ch;
+
     init_ncurse_stdscr();
     assign_color_pairs();
+
+    printw("$> ");
+    while (1) {
+        ch = getch();
+        if (ch == ('d' & 0x1f))
+            break;
+        switch (ch) {
+        case '\n':
+            printw("\n$> ");
+        break;
+        default:
+            addch(ch | A_BOLD);
+        break; 
+        }
+        refresh();
+    }
     finish(0);
     return (0);
 }
