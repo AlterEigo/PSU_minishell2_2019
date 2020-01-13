@@ -1,0 +1,8 @@
+*
+!include
+!sources
+!lib
+!*.c
+!*.h
+!Makefile
+!.gitignore
