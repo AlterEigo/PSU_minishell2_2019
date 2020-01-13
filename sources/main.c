@@ -13,6 +13,10 @@
 #include <fcntl.h>
 #include <stdio.h>
 
+#include "string.h"
+#include "hash_table.h"
+#include "list.h"
+
 static void finish(int sig);
 
 void assign_color_pairs(void)
@@ -38,6 +42,8 @@ void init_ncurse_stdscr(void)
 int main(int argc, char *argv[])
 {
     chtype ch;
+    string_t *buff = str_create("");
+    string_t *tmp = 0;
 
     init_ncurse_stdscr();
     assign_color_pairs();
@@ -49,14 +55,21 @@ int main(int argc, char *argv[])
             break;
         switch (ch) {
         case '\n':
+            printw("\nObtained command : %s", str_cstr(buff));
+            str_free(&buff);
+            buff = str_create("");
             printw("\n$> ");
         break;
         default:
             addch(ch | A_BOLD);
+            tmp = str_addch(buff, ch);
+            str_free(&buff);
+            buff = tmp;
         break; 
         }
         refresh();
     }
+    str_free(&buff);
     finish(0);
     return (0);
 }

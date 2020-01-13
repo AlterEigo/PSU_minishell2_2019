@@ -80,7 +80,11 @@ vpath %.c $(SOURCE_DIR)
 ############################
 
 
-SOURCES_LIST	=	main.c
+SOURCES_LIST	=	main.c \
+					hash_table.c \
+					list.c \
+					string.c \
+					iterator.c
 LIBRARY			=
 
 
