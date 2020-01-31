@@ -85,7 +85,10 @@ SOURCES_LIST	=	main.c \
 					list.c \
 					string.c \
 					iterator.c \
-					utility.c
+					utility.c \
+					nfa_node.c \
+					match.c \
+					builtin_pattern.c
 LIBRARY			=
 
 

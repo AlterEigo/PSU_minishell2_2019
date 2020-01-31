@@ -16,6 +16,7 @@
 #include "hash_table.h"
 #include "nfa_node.h"
 #include "match.h"
+#include "builtin_pattern.h"
 
 string_t *get_envvar(cchar_t var)
 {
@@ -73,27 +74,56 @@ void print_cchar(cchar_t str)
     write(1, str, len);
 }
 
+uint_t exec_builtin_cd(string_t const *command)
+{
+    nfa_node_t *cd_pat = bi_cd_pattern();
+    map_t *matched = 0;
+    string_t *args = 0;
+
+    if (command == 0)
+        return (84);
+    matched = match(str_cstr(command), cd_pat);
+    if (matched == 0)
+        return (84);
+    print_cchar("Cd recognized\n");
+    args = map_get(matched, 1);
+    if (args != 0)
+        str_print(args);
+    return (0);
+}
+
+uint_t exec_builtin_exit(string_t const *command)
+{
+    nfa_node_t *exit_pat = bi_exit_pattern();
+    map_t *matched = 0;
+
+    if (command == 0)
+        return (84);
+    matched = match(str_cstr(command), exit_pat);
+    if (matched == 0)
+        return (84);
+    print_cchar("Exit recognized\n");
+    return (0);
+}
+
+uint_t exec_command(string_t const *command, string_t const *path)
+{
+    exec_builtin_cd(command);
+    exec_builtin_exit(command);
+    return (0);
+}
+
 void prompt_loop()
 {
     string_t *prompt = 0;
     string_t *path = get_envvar("PATH");
     string_t *cwd = get_cwd();
 
-    print_cchar("PATH : ");
-    str_print(path);
-    print_cchar("\n");
     while (1) {
         str_print(cwd);
         write(1, " $> ", 5);
         prompt = prompt_line(prompt);
-        if (str_ccmp(prompt, "exit\n"))
-            break;
-        if (str_ccmp(prompt, "cd\n"))
-            print_cchar("Cd command used\n");
-        else {
-            print_cchar("You entered : ");
-            str_print(prompt);
-        }
+        exec_command(prompt, path);
         str_free(&prompt);
     }
 }
