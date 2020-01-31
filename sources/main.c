@@ -79,6 +79,7 @@ uint_t exec_builtin_cd(string_t const *command)
     nfa_node_t *cd_pat = bi_cd_pattern();
     map_t *matched = 0;
     string_t *args = 0;
+    list_t *arg_list = 0;
 
     if (command == 0)
         return (84);
@@ -87,8 +88,15 @@ uint_t exec_builtin_cd(string_t const *command)
         return (84);
     print_cchar("Cd recognized\n");
     args = map_get(matched, 1);
-    if (args != 0)
-        str_print(args);
+    if (args == 0) {
+        print_cchar("Error : 'cd' takes exactly one argument.\n");
+        return (84);
+    }
+    arg_list = str_split(args, ' ');
+    if (list_len(arg_list) > 1) {
+        print_cchar("Error : 'cd' takes exactly one argument.\n");
+        return (84);
+    }
     return (0);
 }
 
@@ -96,6 +104,7 @@ uint_t exec_builtin_exit(string_t const *command)
 {
     nfa_node_t *exit_pat = bi_exit_pattern();
     map_t *matched = 0;
+    string_t *args = 0;
 
     if (command == 0)
         return (84);
@@ -103,6 +112,11 @@ uint_t exec_builtin_exit(string_t const *command)
     if (matched == 0)
         return (84);
     print_cchar("Exit recognized\n");
+    args = map_get(matched, 1);
+    if (args != 0) {
+        print_cchar("Error : 'exit' doesn't take any arguments.\n");
+        return (84);
+    }
     return (0);
 }
 
