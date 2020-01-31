@@ -8,6 +8,7 @@
 #define IS_STRING_H_INCLUDED
 
 #include "common_types.h"
+#include "list.h"
 
 typedef struct String {
     char *cstr;
@@ -31,5 +32,7 @@ bool_t str_ccmp(string_t const *lhs, cchar_t rhs);
 void str_print(string_t const *str);
 void str_errprint(string_t const *str);
 uint_t str_len(string_t const *str);
+uint_t str_count(string_t const *str, char c);
+list_t *str_split(string_t const *str, char c);
 
 #endif

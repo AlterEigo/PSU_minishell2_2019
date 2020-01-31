@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "string.h"
+#include "utility.h"
 
 const meta_bundle_t MB_STR = {
     str_copy,
@@ -137,12 +138,22 @@ string_t *str_concat(string_t const *lhs, string_t const *rhs)
 
 string_t *str_substr(string_t const *lhs, uint_t start, uint_t end)
 {
-    uint_t len;
+    uint_t len = 0;
+    uint_t nlen = 0;
+    char *substr = 0;
 
     if (lhs == 0)
         return (0);
     len = str_len(lhs);
-    return (0);
+    start = expect_uint(start, 0, len);
+    end = expect_uint(end, start, len);
+    nlen = end - start + 1;
+    substr = malloc(sizeof(char) * (nlen + 1));
+    for (uint_t i = start; i <= end; i++) {
+        substr[i - start] = str_cstr(lhs)[i];
+    }
+    substr[nlen] = '\0';
+    return (str_wcreate(substr));
 }
 
 string_t *str_addch(string_t const *lhs, char rhs)
@@ -174,6 +185,30 @@ bool_t str_ccmp(string_t const *lhs, cchar_t rhs)
     res = str_cmp(lhs, s_rhs);
     str_free(&s_rhs);
     return (res);
+}
+
+uint_t str_count(string_t const *str, char c)
+{
+    uint_t len = 0;
+    uint_t count = 0;
+
+    if (str == 0)
+        return (0);
+    len = str_len(str);
+    for (uint_t i = 0; i < len; i++) {
+        if (str_cstr(str)[i] == c)
+            count += 1;
+    }
+    return (count);
+}
+
+list_t *str_split(string_t const *str, char c)
+{
+    list_t *splitted = 0;
+
+    if (str == 0)
+        return (0);
+    return (0);
 }
 
 bool_t str_cmp(string_t const *lhs, string_t *rhs)
