@@ -1,81 +1,78 @@
 /*
 ** EPITECH PROJECT, 2019
-** Title
+** minishell1 main
 ** File description:
 ** Description
 */
-#include <stdlib.h>
-#include <unistd.h>
-#include <curses.h>
-#include <signal.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 
-#include "string.h"
-#include "hash_table.h"
+#include "common_types.h"
 #include "list.h"
+#include "string.h"
+#include "iterator.h"
+#include "hash_table.h"
 
-static void finish(int sig);
-
-void assign_color_pairs(void)
+string_t *get_envvar(cchar_t var)
 {
-    if (has_colors()) {
-        start_color();
-        init_pair(1, COLOR_WHITE, COLOR_WHITE);
-        init_pair(2, COLOR_GREEN, COLOR_GREEN);
-        init_pair(3, COLOR_YELLOW, COLOR_YELLOW);
+    char *env = 0;
+    string_t *str = 0;
+
+    env = getenv(var);
+    if (env == 0)
+        return (0);
+    str = str_create(env);
+    return (str);
+}
+
+string_t *prompt_line()
+{
+    size_t b_size = 256;
+    char *buffer = 0;
+    string_t *prompt = 0;
+
+    buffer = malloc(sizeof(char) * b_size);
+    if (buffer == 0)
+        return (0);
+    getline(&buffer, &b_size, stdin);
+    if (buffer == 0)
+        return (0);
+    prompt = str_wcreate(buffer);
+    return (prompt);
+}
+
+void print_cchar(cchar_t str)
+{
+    uint_t len;
+
+    if (str == 0)
+        return;
+    for (len = 0; str[len] != 0; len++);
+    if (len == 0)
+        return;
+    write(1, str, len);
+}
+
+void prompt_loop()
+{
+    bool_t looped = TRUE;
+    uint_t count = 0;
+    string_t *prompt = 0;
+
+    while (looped && count < 2) {
+        write(1, "$> ", 4);
+        prompt = prompt_line(prompt);
+        print_cchar("You entered : ");
+        str_print(prompt);
+        str_free(&prompt);
+        count += 1;
     }
 }
 
-void init_ncurse_stdscr(void)
+int main(int argc, char **argv)
 {
-    initscr();
-    raw();
-    noecho();
-    curs_set(TRUE);
-    keypad(stdscr, TRUE);
-    //nodelay(stdscr, TRUE);
-}
-
-int main(int argc, char *argv[])
-{
-    chtype ch;
-    string_t *buff = str_create("");
-    string_t *tmp = 0;
-
-    init_ncurse_stdscr();
-    assign_color_pairs();
-
-    printw("$> ");
-    while (1) {
-        ch = getch();
-        if (ch == ('d' & 0x1f))
-            break;
-        switch (ch) {
-        case '\n':
-            printw("\nObtained command : %s", str_cstr(buff));
-            str_free(&buff);
-            buff = str_create("");
-            printw("\n$> ");
-        break;
-        default:
-            addch(ch | A_BOLD);
-            tmp = str_addch(buff, ch);
-            str_free(&buff);
-            buff = tmp;
-        break; 
-        }
-        refresh();
-    }
-    str_free(&buff);
-    finish(0);
+    prompt_loop();
     return (0);
-}
-
-static void finish(int sig)
-{
-    endwin();
-    exit(sig);
 }
