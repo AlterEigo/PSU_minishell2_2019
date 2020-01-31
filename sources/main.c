@@ -45,6 +45,22 @@ string_t *prompt_line()
     return (prompt);
 }
 
+string_t *get_cwd()
+{
+    char *buffer = 0;
+    size_t b_size = 512;
+    string_t *cwd = 0;
+
+    buffer = malloc(sizeof(char) * b_size);
+    if (getcwd(buffer, b_size) == 0) {
+        if (buffer != 0)
+            free(buffer);
+        return (0);
+    }
+    cwd = str_wcreate(buffer);
+    return (cwd);
+}
+
 void print_cchar(cchar_t str)
 {
     uint_t len;
@@ -61,12 +77,14 @@ void prompt_loop()
 {
     string_t *prompt = 0;
     string_t *path = get_envvar("PATH");
+    string_t *cwd = get_cwd();
 
     print_cchar("PATH : ");
     str_print(path);
     print_cchar("\n");
     while (1) {
-        write(1, "$> ", 4);
+        str_print(cwd);
+        write(1, " $> ", 5);
         prompt = prompt_line(prompt);
         if (str_ccmp(prompt, "exit\n"))
             break;
