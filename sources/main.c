@@ -14,6 +14,8 @@
 #include "string.h"
 #include "iterator.h"
 #include "hash_table.h"
+#include "nfa_node.h"
+#include "match.h"
 
 string_t *get_envvar(cchar_t var)
 {
@@ -57,17 +59,24 @@ void print_cchar(cchar_t str)
 
 void prompt_loop()
 {
-    bool_t looped = TRUE;
-    uint_t count = 0;
     string_t *prompt = 0;
+    string_t *path = get_envvar("PATH");
 
-    while (looped && count < 2) {
+    print_cchar("PATH : ");
+    str_print(path);
+    print_cchar("\n");
+    while (1) {
         write(1, "$> ", 4);
         prompt = prompt_line(prompt);
-        print_cchar("You entered : ");
-        str_print(prompt);
+        if (str_ccmp(prompt, "exit\n"))
+            break;
+        if (str_ccmp(prompt, "cd\n"))
+            print_cchar("Cd command used\n");
+        else {
+            print_cchar("You entered : ");
+            str_print(prompt);
+        }
         str_free(&prompt);
-        count += 1;
     }
 }
 
