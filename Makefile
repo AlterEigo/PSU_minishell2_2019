@@ -84,7 +84,8 @@ SOURCES_LIST	=	main.c \
 					hash_table.c \
 					list.c \
 					string.c \
-					iterator.c
+					iterator.c \
+					utility.c
 LIBRARY			=
 
 
