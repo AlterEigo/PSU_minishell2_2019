@@ -25,6 +25,9 @@ cchar_t str_cstr(string_t const *str);
 string_t *str_dup(string_t const *str);
 string_t *str_concat(string_t const *lhs, string_t const *rhs);
 string_t *str_addch(string_t const *lhs, char rhs);
+string_t *str_substr(string_t const *lhs, uint_t start, uint_t end);
+void str_print(string_t const *str);
+void str_errprint(string_t const *str);
 uint_t str_len(string_t const *str);
 
 #endif

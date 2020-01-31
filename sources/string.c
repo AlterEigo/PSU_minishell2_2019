@@ -5,6 +5,7 @@
 ** Description
 */
 #include <stdlib.h>
+#include <unistd.h>
 #include "string.h"
 
 const meta_bundle_t MB_STR = {
@@ -22,6 +23,26 @@ void *str_copy(void const *str)
     nstr = (string_t*)str;
     nstr = str_dup(nstr);
     return (nstr);
+}
+
+void str_print(string_t const *str)
+{
+    uint_t len;
+    char const *cstr = 0;
+
+    cstr = str_cstr(str);
+    len = str_len(str);
+    write(1, cstr, len);
+}
+
+void str_errprint(string_t const *str)
+{
+    uint_t len;
+    char const *cstr = 0;
+
+    cstr = str_cstr(str);
+    len = str_len(str);
+    write(2, cstr, len);
 }
 
 void str_destroy(void *data)
@@ -74,7 +95,7 @@ void str_free(string_t **pstr)
 
 cchar_t str_cstr(string_t const *str)
 {
-    return (str->cstr);
+    return (cchar_t)(str->cstr);
 }
 
 string_t *str_dup(string_t const *str)
@@ -112,6 +133,16 @@ string_t *str_concat(string_t const *lhs, string_t const *rhs)
     }
     ncstr[len1 + len2] = 0;
     return (str_wcreate(ncstr));
+}
+
+string_t *str_substr(string_t const *lhs, uint_t start, uint_t end)
+{
+    uint_t len;
+
+    if (lhs == 0)
+        return (0);
+    len = str_len(lhs);
+    return (0);
 }
 
 string_t *str_addch(string_t const *lhs, char rhs)
