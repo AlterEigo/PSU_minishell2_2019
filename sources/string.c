@@ -164,3 +164,33 @@ uint_t str_len(string_t const *str)
 {
     return (str->length);
 }
+
+bool_t str_ccmp(string_t const *lhs, cchar_t rhs)
+{
+    string_t *s_rhs = 0;
+    bool_t res = FALSE;
+
+    s_rhs = str_create(rhs);
+    res = str_cmp(lhs, s_rhs);
+    str_free(&s_rhs);
+    return (res);
+}
+
+bool_t str_cmp(string_t const *lhs, string_t *rhs)
+{
+    uint_t len = 0;
+
+    if (lhs == 0) {
+        if (rhs == 0)
+            return (TRUE);
+        return (FALSE);
+    }
+    if (str_len(lhs) != str_len(rhs))
+        return (FALSE);
+    len = str_len(lhs);
+    for (uint_t i = 0; i < len; i++) {
+        if (str_cstr(lhs)[i] != str_cstr(rhs)[i])
+            return (FALSE);
+    }
+    return (TRUE);
+}
