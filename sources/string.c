@@ -205,10 +205,25 @@ uint_t str_count(string_t const *str, char c)
 list_t *str_split(string_t const *str, char c)
 {
     list_t *splitted = 0;
+    uint_t last = 0;
+    uint_t len = 0;
+    uint_t cur = 0;
+    string_t *substr = 0;
 
     if (str == 0)
         return (0);
-    return (0);
+    splitted = list_create(MB_STR);
+    len = str_len(str);
+    for (uint_t i = 0; i < len; i++) {
+        if (str_cstr(str)[i] == c || (i == len - 1)) {
+            cur = (i == len - 1) ? i : i - 1;
+            substr = str_substr(str, last, cur);
+            list_push_back(splitted, substr);
+            str_free(&substr);
+            last = i + 1;
+        }
+    }
+    return (splitted);
 }
 
 bool_t str_cmp(string_t const *lhs, string_t *rhs)
