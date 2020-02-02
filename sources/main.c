@@ -51,13 +51,15 @@ map_t *env_manager(env_option_t opt, char **environment)
 
 string_t *get_envvar(cchar_t var)
 {
-    char *env = 0;
+    map_t *environment = 0;
     string_t *str = 0;
 
-    env = getenv(var);
-    if (env == 0)
+    if (var == 0)
         return (0);
-    str = str_create(env);
+    environment = env_manager(GETENV, 0);
+    str = (string_t*)map_get(environment, hash_str(var));
+    str = str_create(str_cstr(str));
+    map_free(&environment);
     return (str);
 }
 
