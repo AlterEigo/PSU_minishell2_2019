@@ -132,32 +132,41 @@ int change_dir(cchar_t ndir)
     return (0);
 }
 
+list_t *get_args_if_matched(string_t const *command, nfa_node_t *pat)
+{
+    map_t *matched = 0;
+    list_t *arg_list = 0;
+
+    if (command == 0 || pat == 0)
+        return (0);
+    matched = match(str_cstr(command), pat);
+    arg_list = str_split(map_get(matched, 1), ' ');
+    map_free(&matched);
+    nfa_free(&pat);
+    return (arg_list);
+}
+
 uint_t exec_builtin_cd(string_t const *command)
 {
-    nfa_node_t *cd_pat = bi_cd_pattern();
-    map_t *matched = 0;
     string_t *arg = 0;
-    cchar_t ex = 0;
     list_t *arg_list = 0;
     int res = 0;
 
     if (command == 0)
         return (84);
-    matched = match(str_cstr(command), cd_pat);
-    arg_list = str_split(map_get(matched, 1), ' ');
+    arg_list = get_args_if_matched(command, bi_cd_pattern());
     if (arg_list == 0)
         res = change_dir(getenv("HOME"));
-    if (arg_list != 0 && list_len(arg_list) > 1) {
-        print_cerr("cd", "Too many arguments");
-        res = 84;
+    else {
+        if (list_len(arg_list) == 1) {
+            arg = (string_t*)list_data(list_begin(arg_list));
+            res = change_dir(str_cstr(arg));
+        } else {
+            print_cerr("cd", "Too many arguments");
+            res = 84;
+        }
     }
-    if (arg_list != 0 && list_len(arg_list) == 1) {
-        arg = (string_t*)list_data(list_begin(arg_list));
-        res = change_dir(str_cstr(arg));
-    }
-    map_free(&matched);
     list_free(&arg_list);
-    nfa_free(&cd_pat);
     return (res);
 }
 
