@@ -32,7 +32,6 @@ map_t *env_to_map(char **envp)
 
     if (envp == 0)
         return (0);
-    vars = list_create(MB_STR);
     envm = map_create(10, MB_STR);
     for (uint_t i = 0; envp[i] != 0; i++) {
         value = str_create(envp[i]);
@@ -67,6 +66,22 @@ string_t *get_envvar(cchar_t var)
     str = (string_t*)map_get(environment, hash_str(var));
     str = str_create(str_cstr(str));
     return (str);
+}
+
+uint_t set_envvar(cchar_t var, cchar_t value)
+{
+    string_t *cvar = 0;
+    map_t *environment = 0;
+
+    if (var == 0)
+        return (84);
+    environment = env_manager(GETENV, 0);
+    cvar = (string_t*)map_pull(environment, hash_str(var));
+    str_free(&cvar);
+    cvar = str_create(value);
+    map_insert(environment, hash_str(var), cvar);
+    str_free(&cvar);
+    return (0);
 }
 
 string_t *prompt_line()
@@ -168,6 +183,11 @@ int change_dir(cchar_t ndir)
     return (0);
 }
 
+int change_sdir(string_t const *ndir)
+{
+    return (change_dir(str_cstr(ndir)));
+}
+
 list_t *get_args_if_matched(string_t const *cmd, nfa_node_t *pat, bool_t *flag)
 {
     map_t *matched = 0;
@@ -194,7 +214,7 @@ uint_t exec_builtin_cd(string_t const *command)
     if (command == 0)
         return (84);
     arg_list = get_args_if_matched(command, bi_cd_pattern(), &matched);
-    res = (arg_list == 0 && matched) ? change_dir(getenv("HOME")) : res;
+    res = (arg_list == 0 && matched) ? change_sdir(get_envvar("HOME")) : res;
     if (matched && arg_list != 0) {
         if (list_len(arg_list) == 1) {
             arg = (string_t*)list_data(list_begin(arg_list));
@@ -263,7 +283,8 @@ int main(int argc, char **argv, char **env)
 
     env_manager(SETENV, env_to_map(env));
     ref = env_manager(GETENV, 0);
-    prompt_loop();
+    set_envvar("HOME", "/home");
+    //prompt_loop();
     map_free(&ref);
     return (0);
 }
