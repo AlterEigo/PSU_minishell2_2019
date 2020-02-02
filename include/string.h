@@ -33,6 +33,7 @@ void str_print(string_t const *str);
 void str_errprint(string_t const *str);
 uint_t str_len(string_t const *str);
 uint_t str_count(string_t const *str, char c);
+void str_pick(string_t **rstr, char c);
 list_t *str_split(string_t const *str, char c);
 
 #endif

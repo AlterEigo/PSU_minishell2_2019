@@ -202,6 +202,27 @@ uint_t str_count(string_t const *str, char c)
     return (count);
 }
 
+void str_pick(string_t **rstr, char c)
+{
+    char *nstr = 0;
+    string_t *str = *rstr;
+    uint_t nlen = 0;
+
+    if (rstr == 0 || str == 0)
+        return;
+    nlen = str_len(str) - str_count(str, c);
+    nstr = malloc(sizeof(char) * (nlen + 1));
+    nstr[nlen] = 0;
+    for (uint_t i = 0, j = 0; i < str_len(str); i++) {
+        if (str_cstr(str)[i] == c)
+            continue;
+        nstr[j] = str_cstr(str)[i];
+        j += 1;
+    }
+    str_free(rstr);
+    *rstr = str_wcreate(nstr);
+}
+
 list_t *str_split(string_t const *str, char c)
 {
     list_t *splitted = 0;
