@@ -132,6 +132,7 @@ uint_t exec_builtin_cd(string_t const *command)
         return (84);
     }
     arg = (string_t*)list_data(list_begin(arg_list));
+    str_pick(&arg, '\n');
     concat_path(&cwd, arg);
     if (chdir(str_cstr(cwd)) != 0) {
         if (chdir(str_cstr(arg)) != 0) {
