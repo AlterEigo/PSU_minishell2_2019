@@ -7,74 +7,56 @@
 #include <stdlib.h>
 #include "builtin_pattern.h"
 
+static nfa_node_t *create_expression(node_opt_t const *const opts, uint_t size)
+{
+    nfa_node_t **nodes = 0;
+    nfa_node_t *node = 0;
+    node_opt_t cur;
+
+    if (opts == 0)
+        return (0);
+    nodes = malloc(sizeof(nfa_node_t*) * size);
+    for (uint_t i = 0; i < size; i++) {
+        cur = opts[i];
+        nodes[i] = nfa_create(cur.charset, cur.opt);
+        nfa_set_groups(nodes[i], cur.groups);
+    }
+    for (int i = size - 1; i >= 0; i--) {
+        cur = opts[i];
+        if (cur.link < 0 || (uint_t)cur.link >= size)
+            continue;
+        node = nfa_link(nodes[cur.link], nodes[i]);
+        nfa_free(&nodes[i]);
+        nodes[i] = node;
+        node = 0;
+    }
+    return (nodes[0]);
+}
+
 nfa_node_t *bi_cd_pattern()
 {
-    nfa_node_t *origin = nfa_create("c", NFA_DEFAULT);
-    nfa_node_t *last = origin;
-    nfa_node_t *nnode = 0;
+    node_opt_t opts[5];
 
-    nfa_set_groups(origin, (int[]){2, 0});
-
-    nnode = nfa_create("d", NFA_FINAL | NFA_DEFAULT);
-    nfa_set_groups(nnode, (int[]){2, 0});
-    last = nfa_link(last, nnode);
-    nfa_free(&nnode);
-
-    nnode = nfa_create(0, NFA_DEFAULT | NFA_LOOPED);
-    nfa_set_groups(nnode, (int[]){2, 0});
-    nfa_link(last, nnode);
-    nfa_free(&nnode);
-
-    nnode = nfa_create(" \n", NFA_FINAL);
-    nfa_set_groups(nnode, (int[]){2, 0});
-    last = nfa_link(last, nnode);
-    nfa_free(&nnode);
-
-    nnode = nfa_create(0, NFA_FINAL | NFA_LOOPED);
-    nfa_set_groups(nnode, (int[]){3, 0, 1});
-    last = nfa_link(last, nnode);
-    nfa_free(&nnode);
-    return (origin);
+    opts[0] = (node_opt_t){"c", NFA_DEFAULT, (int[]){2, 0}, -1};
+    opts[1] = (node_opt_t){"d", NFA_FINAL | NFA_DEFAULT, (int[]){2, 0}, 0};
+    opts[2] = (node_opt_t){0, NFA_DEFAULT | NFA_LOOPED, (int[]){2, 0}, 1};
+    opts[3] = (node_opt_t){" \n", NFA_FINAL, (int[]){2, 0}, 1};
+    opts[4] = (node_opt_t){0, NFA_FINAL | NFA_LOOPED, (int[]){3, 0, 1}, 3};
+    return (create_expression(opts, 5));
 }
 
 nfa_node_t *bi_exit_pattern()
 {
-    nfa_node_t *origin = nfa_create("e", NFA_DEFAULT);
-    nfa_node_t *last = origin;
-    nfa_node_t *nnode = 0;
+    node_opt_t opts[6];
 
-    nfa_set_groups(origin, (int[]){2, 0});
-
-    nnode = nfa_create("x", NFA_DEFAULT);
-    nfa_set_groups(nnode, (int[]){2, 0});
-    last = nfa_link(last, nnode);
-    nfa_free(&nnode);
-
-    nnode = nfa_create("i", NFA_DEFAULT);
-    nfa_set_groups(nnode, (int[]){2, 0});
-    last = nfa_link(last, nnode);
-    nfa_free(&nnode);
-
-    nnode = nfa_create("t", NFA_FINAL);
-    nfa_set_groups(nnode, (int[]){2, 0});
-    last = nfa_link(last, nnode);
-    nfa_free(&nnode);
-
-    nnode = nfa_create(0, NFA_DEFAULT | NFA_LOOPED);
-    nfa_set_groups(nnode, (int[]){2, 0});
-    nfa_link(last, nnode);
-    nfa_free(&nnode);
-
-    nnode = nfa_create(" \n", NFA_FINAL);
-    nfa_set_groups(nnode, (int[]){2, 0});
-    last = nfa_link(last, nnode);
-    nfa_free(&nnode);
-
-    nnode = nfa_create(0, NFA_FINAL | NFA_LOOPED);
-    nfa_set_groups(nnode, (int[]){3, 0, 1});
-    last = nfa_link(last, nnode);
-    nfa_free(&nnode);
-    return (origin);
+    opts[0] = (node_opt_t){"e", NFA_DEFAULT, (int[]){2, 0}, -1};
+    opts[1] = (node_opt_t){"x", NFA_DEFAULT, (int[]){2, 0}, 0};
+    opts[2] = (node_opt_t){"i", NFA_DEFAULT, (int[]){2, 0}, 1};
+    opts[3] = (node_opt_t){"t", NFA_FINAL, (int[]){2, 0}, 2};
+    opts[4] = (node_opt_t){0, NFA_DEFAULT | NFA_LOOPED, (int[]){2, 0}, 3};
+    opts[4] = (node_opt_t){" \n", NFA_FINAL, (int[]){2, 0}, 3};
+    opts[5] = (node_opt_t){0, NFA_FINAL | NFA_LOOPED, (int[]){3, 0, 1}, 4};
+    return (create_expression(opts, 5));
 }
 
 nfa_node_t *bi_setenv_pattern()

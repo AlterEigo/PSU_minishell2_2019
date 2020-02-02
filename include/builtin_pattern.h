@@ -10,6 +10,13 @@
 #include "common_types.h"
 #include "nfa_node.h"
 
+typedef struct NodeOpt {
+    char const *charset;
+    nfa_options_t opt;
+    int const *groups;
+    int link;
+} node_opt_t;
+
 nfa_node_t *bi_cd_pattern();
 nfa_node_t *bi_exit_pattern();
 nfa_node_t *bi_setenv_pattern();
