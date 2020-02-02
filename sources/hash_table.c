@@ -53,7 +53,7 @@ void map_insert(map_t *map, hash_value_t key, void const *value)
     nitem = ht_item_create(key, copy);
     key = key % map->array_size;
     list = map->data_table[key];
-    list_push_front(list, nitem);
+    list_push_back(list, nitem);
     ht_item_free(&nitem);
 }
 
