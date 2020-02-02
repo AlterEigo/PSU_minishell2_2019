@@ -19,7 +19,35 @@
 #include "match.h"
 #include "builtin_pattern.h"
 
+typedef enum { GETENV, SETENV } env_option_t;
+
 char *strerror(int code);
+
+map_t *env_manager(env_option_t opt, char **environment)
+{
+    list_t *vars = 0;
+    string_t *key = 0;
+    string_t *value = 0;
+    static char **envp = 0;
+    map_t *envm = 0;
+
+    if (opt == GETENV) {
+        vars = list_create(MB_STR);
+        envm = map_create(10, MB_STR);
+        for (uint_t i = 0; envp[i] != 0; i++) {
+            value = str_create(envp[i]);
+            vars = str_nsplit(value, '=', 1);
+            str_free(&value);
+            key = (string_t*)list_data(list_begin(vars));
+            value = (string_t*)list_data(it_next(list_begin(vars)));
+            map_insert(envm, hash_str(str_cstr(key)), value);
+            list_free(&vars);
+        }
+        return (envm);
+    }
+    envp = environment;
+    return (0);
+}
 
 string_t *get_envvar(cchar_t var)
 {
@@ -217,11 +245,17 @@ void prompt_loop()
             break;
         str_free(&prompt);
     }
+    str_free(&prompt);
     str_free(&path);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char **argv, char **env)
 {
+    map_t *ref = 0;
+
+    env_manager(SETENV, env);
+    ref = env_manager(GETENV, 0);
+    map_free(&ref);
     prompt_loop();
     return (0);
 }
