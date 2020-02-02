@@ -74,6 +74,16 @@ void print_cchar(cchar_t str)
     write(1, str, len);
 }
 
+void print_cerr(cchar_t cmd, cchar_t msg)
+{
+    if (cmd == 0 || msg == 0)
+        return;
+    print_cchar(cmd);
+    print_cchar(" : ");
+    print_cchar(msg);
+    print_cchar(".\n");
+}
+
 uint_t exec_builtin_cd(string_t const *command)
 {
     nfa_node_t *cd_pat = bi_cd_pattern();
@@ -84,17 +94,13 @@ uint_t exec_builtin_cd(string_t const *command)
     if (command == 0)
         return (84);
     matched = match(str_cstr(command), cd_pat);
-    if (matched == 0)
-        return (84);
-    print_cchar("Cd recognized\n");
     args = map_get(matched, 1);
-    if (args == 0) {
-        print_cchar("Error : 'cd' takes exactly one argument.\n");
-        return (84);
-    }
     arg_list = str_split(args, ' ');
+    if (arg_list == 0) {
+        chdir(str_cstr(get_envvar("HOME")));
+    }
     if (list_len(arg_list) > 1) {
-        print_cchar("Error : 'cd' takes exactly one argument.\n");
+        print_cerr("cd", "Too many arguments");
         return (84);
     }
     return (0);
@@ -111,10 +117,9 @@ uint_t exec_builtin_exit(string_t const *command)
     matched = match(str_cstr(command), exit_pat);
     if (matched == 0)
         return (84);
-    print_cchar("Exit recognized\n");
     args = map_get(matched, 1);
     if (args != 0) {
-        print_cchar("Error : 'exit' doesn't take any arguments.\n");
+        print_cerr("exit", "Invalid Syntax");
         return (84);
     }
     return (0);
@@ -131,11 +136,9 @@ void prompt_loop()
 {
     string_t *prompt = 0;
     string_t *path = get_envvar("PATH");
-    string_t *cwd = get_cwd();
 
     while (1) {
-        str_print(cwd);
-        write(1, " $> ", 5);
+        write(1, "> ", 5);
         prompt = prompt_line(prompt);
         exec_command(prompt, path);
         str_free(&prompt);
