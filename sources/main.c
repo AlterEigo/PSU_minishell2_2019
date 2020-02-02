@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "common_types.h"
 #include "list.h"
@@ -17,6 +18,8 @@
 #include "nfa_node.h"
 #include "match.h"
 #include "builtin_pattern.h"
+
+char *strerror(int code);
 
 string_t *get_envvar(cchar_t var)
 {
@@ -76,32 +79,64 @@ void print_cchar(cchar_t str)
 
 void print_cerr(cchar_t cmd, cchar_t msg)
 {
-    if (cmd == 0 || msg == 0)
+    string_t *scmd = 0;
+    string_t *smsg = 0;
+
+    if (cmd == 0)
         return;
-    print_cchar(cmd);
-    print_cchar(" : ");
-    print_cchar(msg);
-    print_cchar(".\n");
+    if (msg == 0)
+        msg = strerror(errno);
+    scmd = str_create(cmd);
+    smsg = str_create(msg);
+    write(2, str_cstr(scmd), str_len(scmd));
+    write(2, " : ", 4);
+    write(2, str_cstr(smsg), str_len(smsg));
+    write(2, ".\n", 3);
+}
+
+void concat_path(string_t **rpath, string_t *part)
+{
+    string_t *tmp = 0;
+    string_t *path = *rpath;
+
+    if (rpath == 0 || path == 0 || part == 0)
+        return;
+    tmp = str_addch(path, '/');
+    str_free(&path);
+    path = tmp;
+    tmp = str_concat(path, part);
+    str_free(&path);
+    *rpath = tmp;
 }
 
 uint_t exec_builtin_cd(string_t const *command)
 {
     nfa_node_t *cd_pat = bi_cd_pattern();
     map_t *matched = 0;
-    string_t *args = 0;
+    string_t *arg = 0;
+    string_t *cwd = 0;
+    cchar_t ex = 0;
     list_t *arg_list = 0;
 
     if (command == 0)
         return (84);
+    cwd = get_cwd();
     matched = match(str_cstr(command), cd_pat);
-    args = map_get(matched, 1);
-    arg_list = str_split(args, ' ');
+    arg_list = str_split(map_get(matched, 1), ' ');
     if (arg_list == 0) {
         chdir(str_cstr(get_envvar("HOME")));
+        return (0);
     }
     if (list_len(arg_list) > 1) {
         print_cerr("cd", "Too many arguments");
         return (84);
+    }
+    arg = (string_t*)list_data(list_begin(arg_list));
+    concat_path(&cwd, arg);
+    if (chdir(str_cstr(cwd)) != 0) {
+        if (chdir(str_cstr(arg)) != 0) {
+            print_cerr("cd", 0);
+        }
     }
     return (0);
 }
@@ -136,9 +171,12 @@ void prompt_loop()
 {
     string_t *prompt = 0;
     string_t *path = get_envvar("PATH");
+    string_t *cwd = 0;
 
     while (1) {
-        write(1, "> ", 5);
+        cwd = get_cwd();
+        str_print(cwd);
+        print_cchar(" > ");
         prompt = prompt_line(prompt);
         exec_command(prompt, path);
         str_free(&prompt);
