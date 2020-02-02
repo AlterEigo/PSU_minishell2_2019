@@ -11,26 +11,24 @@ static nfa_node_t *create_expression(node_opt_t const *const opts, uint_t size)
 {
     nfa_node_t **nodes = 0;
     nfa_node_t *node = 0;
-    node_opt_t cur;
 
     if (opts == 0)
         return (0);
     nodes = malloc(sizeof(nfa_node_t*) * size);
     for (uint_t i = 0; i < size; i++) {
-        cur = opts[i];
-        nodes[i] = nfa_create(cur.charset, cur.opt);
-        nfa_set_groups(nodes[i], cur.groups);
+        nodes[i] = nfa_create(opts[i].charset, opts[i].opt);
+        nfa_set_groups(nodes[i], opts[i].groups);
     }
     for (int i = size - 1; i >= 0; i--) {
-        cur = opts[i];
-        if (cur.link < 0 || (uint_t)cur.link >= size)
+        if (opts[i].link < 0 || (uint_t)opts[i].link >= size)
             continue;
-        node = nfa_link(nodes[cur.link], nodes[i]);
+        node = nfa_link(nodes[opts[i].link], nodes[i]);
         nfa_free(&nodes[i]);
         nodes[i] = node;
-        node = 0;
     }
-    return (nodes[0]);
+    node = nodes[0];
+    free(nodes);
+    return (node);
 }
 
 nfa_node_t *bi_cd_pattern()

@@ -88,7 +88,12 @@ SOURCES_LIST	=	main.c \
 					utility.c \
 					nfa_node.c \
 					match.c \
-					builtin_pattern.c
+					builtin_pattern.c \
+					core_env.c \
+					core_io.c \
+					core_os.c \
+					core_builtin.c \
+					core_args.c
 LIBRARY			=
 
 
