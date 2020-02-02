@@ -23,29 +23,36 @@ typedef enum { GETENV, SETENV } env_option_t;
 
 char *strerror(int code);
 
-map_t *env_manager(env_option_t opt, char **environment)
+map_t *env_to_map(char **envp)
 {
     list_t *vars = 0;
+    map_t *envm = 0;
     string_t *key = 0;
     string_t *value = 0;
-    static char **envp = 0;
-    map_t *envm = 0;
 
-    if (opt == GETENV) {
-        vars = list_create(MB_STR);
-        envm = map_create(10, MB_STR);
-        for (uint_t i = 0; envp[i] != 0; i++) {
-            value = str_create(envp[i]);
-            vars = str_nsplit(value, '=', 1);
-            str_free(&value);
-            key = (string_t*)list_data(list_begin(vars));
-            value = (string_t*)list_data(it_next(list_begin(vars)));
-            map_insert(envm, hash_str(str_cstr(key)), value);
-            list_free(&vars);
-        }
-        return (envm);
+    if (envp == 0)
+        return (0);
+    vars = list_create(MB_STR);
+    envm = map_create(10, MB_STR);
+    for (uint_t i = 0; envp[i] != 0; i++) {
+        value = str_create(envp[i]);
+        vars = str_nsplit(value, '=', 1);
+        str_free(&value);
+        key = (string_t*)list_data(list_begin(vars));
+        value = (string_t*)list_data(it_next(list_begin(vars)));
+        map_insert(envm, hash_str(str_cstr(key)), value);
+        list_free(&vars);
     }
-    envp = environment;
+    return (envm);
+}
+
+map_t *env_manager(env_option_t opt, map_t *environment)
+{
+    static map_t *envm = 0;
+
+    if (opt == GETENV)
+        return (envm);
+    envm = environment;
     return (0);
 }
 
@@ -59,7 +66,6 @@ string_t *get_envvar(cchar_t var)
     environment = env_manager(GETENV, 0);
     str = (string_t*)map_get(environment, hash_str(var));
     str = str_create(str_cstr(str));
-    map_free(&environment);
     return (str);
 }
 
@@ -255,9 +261,9 @@ int main(int argc, char **argv, char **env)
 {
     map_t *ref = 0;
 
-    env_manager(SETENV, env);
+    env_manager(SETENV, env_to_map(env));
     ref = env_manager(GETENV, 0);
-    map_free(&ref);
     prompt_loop();
+    map_free(&ref);
     return (0);
 }
