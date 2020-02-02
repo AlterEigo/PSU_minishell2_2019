@@ -132,14 +132,16 @@ int change_dir(cchar_t ndir)
     return (0);
 }
 
-list_t *get_args_if_matched(string_t const *command, nfa_node_t *pat)
+list_t *get_args_if_matched(string_t const *cmd, nfa_node_t *pat, bool_t *flag)
 {
     map_t *matched = 0;
     list_t *arg_list = 0;
 
-    if (command == 0 || pat == 0)
+    if (cmd == 0 || pat == 0)
         return (0);
-    matched = match(str_cstr(command), pat);
+    matched = match(str_cstr(cmd), pat);
+    if (flag != 0)
+        *flag = (matched == 0) ? FALSE : TRUE;
     arg_list = str_split(map_get(matched, 1), ' ');
     map_free(&matched);
     nfa_free(&pat);
@@ -154,7 +156,7 @@ uint_t exec_builtin_cd(string_t const *command)
 
     if (command == 0)
         return (84);
-    arg_list = get_args_if_matched(command, bi_cd_pattern());
+    arg_list = get_args_if_matched(command, bi_cd_pattern(), 0);
     if (arg_list == 0)
         res = change_dir(getenv("HOME"));
     else {
@@ -172,27 +174,30 @@ uint_t exec_builtin_cd(string_t const *command)
 
 uint_t exec_builtin_exit(string_t const *command)
 {
-    nfa_node_t *exit_pat = bi_exit_pattern();
-    map_t *matched = 0;
-    string_t *args = 0;
+    list_t *arg_list = 0;
+    uint_t res = 0;
+    bool_t matched = FALSE;
 
     if (command == 0)
         return (84);
-    matched = match(str_cstr(command), exit_pat);
-    if (matched == 0)
-        return (84);
-    args = map_get(matched, 1);
-    if (args != 0) {
+    arg_list = get_args_if_matched(command, bi_exit_pattern(), &matched);
+    if (arg_list != 0) {
         print_cerr("exit", "Invalid Syntax");
-        return (84);
+        res = 84;
     }
-    return (0);
+    if (arg_list == 0 && matched) {
+        print_cchar("exit\n");
+        res = 200;
+    }
+    list_free(&arg_list);
+    return (res);
 }
 
 uint_t exec_command(string_t const *command, string_t const *path)
 {
     exec_builtin_cd(command);
-    //exec_builtin_exit(command);
+    if (exec_builtin_exit(command) == 200)
+        return (200);
     return (0);
 }
 
@@ -201,17 +206,16 @@ void prompt_loop()
     string_t *prompt = 0;
     string_t *path = get_envvar("PATH");
     string_t *cwd = 0;
-    uint_t count = 0;
 
-    while (count < 2) {
+    while (1) {
         cwd = get_cwd();
         str_print(cwd);
         str_free(&cwd);
         print_cchar(" > ");
         prompt = prompt_line(prompt);
-        exec_command(prompt, path);
+        if (exec_command(prompt, path) == 200)
+            break;
         str_free(&prompt);
-        count += 1;
     }
     str_free(&path);
 }
