@@ -152,14 +152,14 @@ uint_t exec_builtin_cd(string_t const *command)
 {
     string_t *arg = 0;
     list_t *arg_list = 0;
+    bool_t matched = FALSE;
     int res = 0;
 
     if (command == 0)
         return (84);
-    arg_list = get_args_if_matched(command, bi_cd_pattern(), 0);
-    if (arg_list == 0)
-        res = change_dir(getenv("HOME"));
-    else {
+    arg_list = get_args_if_matched(command, bi_cd_pattern(), &matched);
+    res = (arg_list == 0 && matched) ? change_dir(getenv("HOME")) : res;
+    if (matched && arg_list != 0) {
         if (list_len(arg_list) == 1) {
             arg = (string_t*)list_data(list_begin(arg_list));
             res = change_dir(str_cstr(arg));
