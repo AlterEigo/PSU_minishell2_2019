@@ -280,11 +280,11 @@ void prompt_loop()
 int main(int argc, char **argv, char **env)
 {
     map_t *ref = 0;
+    nfa_node_t *node;
 
     env_manager(SETENV, env_to_map(env));
     ref = env_manager(GETENV, 0);
-    set_envvar("HOME", "/home");
-    //prompt_loop();
+    prompt_loop();
     map_free(&ref);
     return (0);
 }
