@@ -247,6 +247,30 @@ list_t *str_split(string_t const *str, char c)
     return (splitted);
 }
 
+list_t *str_nsplit(string_t const *str, char c, uint_t count)
+{
+    list_t *splitted = 0;
+    uint_t last = 0;
+    uint_t cur = 0;
+    string_t *substr = 0;
+
+    if (str == 0)
+        return (0);
+    splitted = list_create(MB_STR);
+    for (uint_t i = 0, j = 0; i < str_len(str) && j <= count; i++) {
+        if (str_cstr(str)[i] == c || (i == str_len(str) - 1)) {
+            cur = (i == str_len(str) - 1) ? i : i - 1;
+            cur = (j == count) ? str_len(str) : cur;
+            substr = str_substr(str, last, cur);
+            list_push_back(splitted, substr);
+            str_free(&substr);
+            last = i + 1;
+            j += 1;
+        }
+    }
+    return (splitted);
+}
+
 bool_t str_cmp(string_t const *lhs, string_t *rhs)
 {
     uint_t len = 0;
