@@ -46,6 +46,7 @@ string_t *prompt_line()
     if (buffer == 0)
         return (0);
     prompt = str_wcreate(buffer);
+    str_pick(&prompt, '\n');
     return (prompt);
 }
 
@@ -109,37 +110,55 @@ void concat_path(string_t **rpath, string_t *part)
     *rpath = tmp;
 }
 
+int change_dir(cchar_t ndir)
+{
+    string_t *dir = 0;
+    string_t *path = 0;
+
+    if (ndir == 0)
+        return (84);
+    path = get_cwd();
+    dir = str_create(ndir);
+    concat_path(&path, dir);
+    if (chdir(str_cstr(path)) != 0)
+        if (chdir(str_cstr(dir)) != 0) {
+            print_cerr("cd", 0);
+            str_free(&dir);
+            str_free(&path);
+            return (84);
+        }
+    str_free(&dir);
+    str_free(&path);
+    return (0);
+}
+
 uint_t exec_builtin_cd(string_t const *command)
 {
     nfa_node_t *cd_pat = bi_cd_pattern();
     map_t *matched = 0;
     string_t *arg = 0;
-    string_t *cwd = 0;
     cchar_t ex = 0;
     list_t *arg_list = 0;
+    int res = 0;
 
     if (command == 0)
         return (84);
-    cwd = get_cwd();
     matched = match(str_cstr(command), cd_pat);
     arg_list = str_split(map_get(matched, 1), ' ');
-    if (arg_list == 0) {
-        chdir(str_cstr(get_envvar("HOME")));
-        return (0);
-    }
-    if (list_len(arg_list) > 1) {
+    if (arg_list == 0)
+        res = change_dir(getenv("HOME"));
+    if (arg_list != 0 && list_len(arg_list) > 1) {
         print_cerr("cd", "Too many arguments");
-        return (84);
+        res = 84;
     }
-    arg = (string_t*)list_data(list_begin(arg_list));
-    str_pick(&arg, '\n');
-    concat_path(&cwd, arg);
-    if (chdir(str_cstr(cwd)) != 0) {
-        if (chdir(str_cstr(arg)) != 0) {
-            print_cerr("cd", 0);
-        }
+    if (arg_list != 0 && list_len(arg_list) == 1) {
+        arg = (string_t*)list_data(list_begin(arg_list));
+        res = change_dir(str_cstr(arg));
     }
-    return (0);
+    map_free(&matched);
+    list_free(&arg_list);
+    nfa_free(&cd_pat);
+    return (res);
 }
 
 uint_t exec_builtin_exit(string_t const *command)
@@ -164,7 +183,7 @@ uint_t exec_builtin_exit(string_t const *command)
 uint_t exec_command(string_t const *command, string_t const *path)
 {
     exec_builtin_cd(command);
-    exec_builtin_exit(command);
+    //exec_builtin_exit(command);
     return (0);
 }
 
@@ -173,15 +192,19 @@ void prompt_loop()
     string_t *prompt = 0;
     string_t *path = get_envvar("PATH");
     string_t *cwd = 0;
+    uint_t count = 0;
 
-    while (1) {
+    while (count < 2) {
         cwd = get_cwd();
         str_print(cwd);
+        str_free(&cwd);
         print_cchar(" > ");
         prompt = prompt_line(prompt);
         exec_command(prompt, path);
         str_free(&prompt);
+        count += 1;
     }
+    str_free(&path);
 }
 
 int main(int argc, char **argv)
