@@ -13,6 +13,19 @@ const meta_bundle_t MB_HT_ITEM = {
     sizeof(ht_item_t)
 };
 
+hash_value_t hash_str(char const *str)
+{
+    hash_value_t hash = 47441;
+    char c;
+
+    while (*str) {
+        c = *str;
+        hash = ((hash << 5) + hash) + c;
+        str++;
+    }
+    return (hash);
+}
+
 map_t *map_create(unsigned int size, meta_bundle_t meta)
 {
     map_t *map = malloc(sizeof(map_t));
