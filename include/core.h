@@ -34,7 +34,9 @@ int change_sdir(string_t const *ndir);
 uint_t exec_builtin_cd(string_t const *command);
 uint_t exec_builtin_exit(string_t const *command);
 uint_t exec_builtin_env(string_t const *command);
+uint_t exec_builtin_setenv(string_t const *command);
 list_t *get_args_if_matched(string_t const *cmd, nfa_node_t *pat, bool_t *flag);
 uint_t exec_command(string_t const *command, string_t const *path);
+void print_env();
 
 #endif

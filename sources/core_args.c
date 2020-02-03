@@ -39,6 +39,7 @@ uint_t exec_command(string_t const *command, string_t const *path)
 {
     exec_builtin_cd(command);
     exec_builtin_env(command);
+    exec_builtin_setenv(command);
     if (exec_builtin_exit(command) == 200)
         return (200);
     return (0);

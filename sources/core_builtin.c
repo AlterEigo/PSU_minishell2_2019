@@ -69,18 +69,13 @@ uint_t exec_builtin_env(string_t const *command)
     list_t *arg_list = 0;
     uint_t res = 0;
     bool_t matched = FALSE;
-    char **env = 0;
 
     if (command == 0)
         return (84);
-    env_manager(GETCENV, 0, &env);
     arg_list = get_args_if_matched(command, bi_env_pattern(), &matched);
-    if (matched && arg_list == 0) {
-        for (uint_t i = 0; env[i] != 0; i++) {
-            print_cchar(env[i]);
-            write(1, "\n", 1);
-        }
-    } else
+    if (matched && arg_list == 0)
+        print_env();
+    else
         res = 84;
     list_free(&arg_list);
     return (res);
@@ -91,10 +86,21 @@ uint_t exec_builtin_setenv(string_t const *command)
     uint_t res = 0;
     bool_t matched = FALSE;
     list_t *arg_list = 0;
+    string_t *key = 0;
+    string_t *value = 0;
 
     arg_list = get_args_if_matched(command, bi_setenv_pattern(), &matched);
-    if (matched && arg_list == 0) {
-        
-    }
+    if (arg_list != 0 && list_len(arg_list) < 3) {
+        key = (string_t*)list_data(list_begin(arg_list));
+        if (list_len(arg_list) > 1)
+            value = (string_t*)list_data(it_next(list_begin(arg_list)));
+        else
+            value = str_create("");
+        set_envvar(str_cstr(key), str_cstr(value));
+    } else if (arg_list != 0 && list_len(arg_list) < 3) {
+        print_cerr("setenv", "Too many arguments");
+    } else
+        print_env();
+    list_free(&arg_list);
     return (res);
 }

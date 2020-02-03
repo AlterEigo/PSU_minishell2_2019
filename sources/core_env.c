@@ -58,6 +58,17 @@ map_t *env_to_map(char **envp)
     return (envm);
 }
 
+void print_env()
+{
+    char **envp = 0;
+
+    env_manager(GETCENV, 0, &envp);
+    for (uint_t i = 0; envp[i] != 0; i++) {
+        print_cchar(envp[i]);
+        write(1, "\n", 1);
+    }
+}
+
 map_t *env_manager(env_option_t opt, char **environment, char ***penv)
 {
     static map_t *envm = 0;
