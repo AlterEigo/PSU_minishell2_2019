@@ -90,16 +90,16 @@ uint_t exec_builtin_setenv(string_t const *command)
     string_t *value = 0;
 
     arg_list = get_args_if_matched(command, bi_setenv_pattern(), &matched);
-    if (arg_list != 0 && list_len(arg_list) < 3) {
+    if (matched && arg_list != 0 && list_len(arg_list) < 3) {
         key = (string_t*)list_data(list_begin(arg_list));
         if (list_len(arg_list) > 1)
             value = (string_t*)list_data(it_next(list_begin(arg_list)));
         else
             value = str_create("");
         set_envvar(str_cstr(key), str_cstr(value));
-    } else if (arg_list != 0 && list_len(arg_list) < 3) {
+    } else if (matched && arg_list != 0 && list_len(arg_list) < 3) {
         print_cerr("setenv", "Too many arguments");
-    } else
+    } else if (matched)
         print_env();
     list_free(&arg_list);
     return (res);

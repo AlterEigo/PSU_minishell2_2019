@@ -271,7 +271,7 @@ list_t *str_nsplit(string_t const *str, char c, uint_t count)
     return (splitted);
 }
 
-bool_t str_cmp(string_t const *lhs, string_t *rhs)
+bool_t str_cmp(string_t const *lhs, string_t const *rhs)
 {
     uint_t len = 0;
 

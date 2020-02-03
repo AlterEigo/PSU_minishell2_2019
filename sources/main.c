@@ -12,6 +12,7 @@
 
 #include "core.h"
 #include "common_types.h"
+#include "env_map.h"
 #include "list.h"
 #include "string.h"
 #include "iterator.h"
@@ -42,11 +43,8 @@ void prompt_loop()
 
 int main(int argc, char **argv, char **env)
 {
-    map_t *ref = 0;
-
-    env_manager(SETENV, env, 0);
-    ref = env_manager(GETENV, 0, 0);
+    env_manager(SETENV, env);
     prompt_loop();
-    map_free(&ref);
+    env_manager(FREE, 0);
     return (0);
 }

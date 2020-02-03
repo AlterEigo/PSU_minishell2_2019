@@ -8,6 +8,7 @@
 #define IS_CORE_H_INCLUDED
 
 #include "common_types.h"
+#include "env_map.h"
 #include "list.h"
 #include "string.h"
 #include "iterator.h"
@@ -16,14 +17,16 @@
 #include "match.h"
 #include "builtin_pattern.h"
 
-typedef enum { GETENV, SETENV, GETCENV } env_option_t;
+typedef enum { GETENV, SETENV, FREE } env_option_t;
 
 char *strerror(int code);
 
-map_t *env_to_map(char **envp);
-map_t *env_manager(env_option_t opt, char **environment, char ***penv);
+env_map_t env_to_map(char **envp);
+env_map_t *env_manager(env_option_t opt, char **environment);
 string_t *get_envvar(cchar_t var);
 uint_t set_envvar(cchar_t var, cchar_t value);
+void env_add_key(cchar_t key);
+void env_rem_key(cchar_t key);
 string_t *get_cwd();
 string_t *prompt_line();
 void print_cchar(cchar_t str);

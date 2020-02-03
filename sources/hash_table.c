@@ -69,7 +69,7 @@ void *map_get(map_t *map, hash_value_t key)
     it = list_begin(list);
     for (uint_t i = 0; i < list_len(list); i++, it = it_next(it)) {
         item = (ht_item_t*)list_data(it);
-        if (item->key == key)
+        if (item != 0 && item->key == key)
             return (item->value);
     }
     return (0);
