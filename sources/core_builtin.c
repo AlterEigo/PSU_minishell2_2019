@@ -85,3 +85,16 @@ uint_t exec_builtin_env(string_t const *command)
     list_free(&arg_list);
     return (res);
 }
+
+uint_t exec_builtin_setenv(string_t const *command)
+{
+    uint_t res = 0;
+    bool_t matched = FALSE;
+    list_t *arg_list = 0;
+
+    arg_list = get_args_if_matched(command, bi_setenv_pattern(), &matched);
+    if (matched && arg_list == 0) {
+        
+    }
+    return (res);
+}
