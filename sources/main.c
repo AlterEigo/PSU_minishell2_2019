@@ -33,6 +33,10 @@ void prompt_loop()
         str_free(&cwd);
         print_cchar(" > ");
         prompt = prompt_line(prompt);
+        if (prompt == 0) {
+            print_cchar("exit\n");
+            break;
+        }
         if (exec_command(prompt, path) == 200)
             break;
         str_free(&prompt);

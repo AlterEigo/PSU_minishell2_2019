@@ -28,9 +28,10 @@ string_t *prompt_line()
     buffer = malloc(sizeof(char) * b_size);
     if (buffer == 0)
         return (0);
-    getline(&buffer, &b_size, stdin);
-    if (buffer == 0)
+    if (getline(&buffer, &b_size, stdin) == -1) {
+        free(buffer);
         return (0);
+    }
     prompt = str_wcreate(buffer);
     str_pick(&prompt, '\n');
     return (prompt);
