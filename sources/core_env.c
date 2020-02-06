@@ -152,7 +152,7 @@ void env_add_key(cchar_t ckey)
         return;
     key = str_create(ckey);
     it = env_key_exists(key);
-    if (!list_final(env->keys, it_back(it))) {
+    if (list_final(env->keys, it)) {
         list_push_back(env->keys, key);
     }
     str_free(&key);
