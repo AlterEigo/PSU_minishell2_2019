@@ -107,7 +107,9 @@ void list_push_front(list_t *list, void *data)
     sizeof_data = list->type_meta.data_size;
     data = (copy == 0) ? mem_copy(data, sizeof_data) : copy(data);
     it = it_allocate(data, sizeof_data);
-    it_couple(it, list->begin);
+    it->next = list->begin;
+    list->begin->prior = it;
+    it->layer_id = list->begin->layer_id;
     list->begin = it;
     list->size += 1;
 }
@@ -167,7 +169,8 @@ void *list_pull(list_t *list, iterator_t it)
     data = it_data(it);
     prior = it_get_prior(&it);
     next = it_get_next(&it);
-    list->begin = (prior == 0) ? next : prior;
+    if (prior == 0)
+	list->begin = next;
     pit = (prior == 0) ? it_get_prior(next) : it_get_next(prior);
     it_free(&pit);
     it_couple(prior, next);
