@@ -116,7 +116,7 @@ uint_t set_envvar(cchar_t var, cchar_t value)
     if (var == 0)
         return (84);
     environment = env_manager(GETENV, 0)->val_map;
-    //env_add_key(var);
+    env_add_key(var);
     cvar = (string_t*)map_pull(environment, hash_str(var));
     str_free(&cvar);
     cvar = str_create(value);
@@ -152,7 +152,7 @@ void env_add_key(cchar_t ckey)
         return;
     key = str_create(ckey);
     it = env_key_exists(key);
-    if (!list_final(env->keys, it)) {
+    if (!list_final(env->keys, it_back(it))) {
         list_push_back(env->keys, key);
     }
     str_free(&key);
