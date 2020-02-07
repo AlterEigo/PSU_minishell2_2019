@@ -136,6 +136,17 @@ string_t *str_concat(string_t const *lhs, string_t const *rhs)
     return (str_wcreate(ncstr));
 }
 
+string_t *str_cconcat(cchar_t c_lhs, cchar_t c_rhs)
+{
+    string_t *lhs = str_create(c_lhs);
+    string_t *rhs = str_create(c_rhs);
+    string_t *res = str_concat(lhs, rhs);
+
+    str_free(&lhs);
+    str_free(&rhs);
+    return (res);
+}
+
 string_t *str_substr(string_t const *lhs, uint_t start, uint_t end)
 {
     uint_t len = 0;
