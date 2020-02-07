@@ -18,6 +18,7 @@
 #include "builtin_pattern.h"
 
 typedef enum { GETENV, SETENV, FREE } env_option_t;
+typedef uint_t (*builtin_ft)(list_t const *args);
 
 char *strerror(int code);
 
@@ -35,13 +36,24 @@ void print_cerr(cchar_t cmd, cchar_t msg);
 void concat_path(string_t **rpath, string_t *part);
 int change_dir(cchar_t ndir);
 int change_sdir(string_t const *ndir);
+
+// OLD
 uint_t exec_builtin_cd(string_t const *command);
 uint_t exec_builtin_exit(string_t const *command);
 uint_t exec_builtin_env(string_t const *command);
 uint_t exec_builtin_setenv(string_t const *command);
 uint_t exec_builtin_unsetenv(string_t const *command);
+
+// NEW
+uint_t builtin_cd(list_t const *args);
+uint_t builtin_exit(list_t const *args);
+uint_t builtin_env(list_t const *args);
+uint_t builtin_setenv(list_t const *args);
+uint_t builtin_unsetenv(list_t const *args);
+
 list_t *get_args_if_matched(string_t const *cmd, nfa_node_t *pat, bool_t *flag);
 uint_t exec_command(string_t const *command, string_t const *path);
+uint_t eval_prompt(string_t const *prompt);
 void print_env();
 
 #endif

@@ -37,7 +37,7 @@ void prompt_loop()
             print_cchar("exit\n");
             break;
         }
-        if (exec_command(prompt, path) == 200)
+        if (eval_prompt(prompt) == 200)
             break;
         str_free(&prompt);
     }

@@ -35,6 +35,53 @@ list_t *get_args_if_matched(string_t const *cmd, nfa_node_t *pat, bool_t *flag)
     return (arg_list);
 }
 
+static builtin_ft h_to_b(hash_value_t hs, hash_value_t ha[], builtin_ft fa[])
+{
+    if (ha == 0 || fa == 0)
+	return (0);
+    for (int i = 0; ha[i] != 0; i++) {
+	if (ha[i] == hs)
+	    return (fa[i]);
+    }
+    return (0);
+}
+
+builtin_ft get_builtin(string_t const *command)
+{
+    hash_value_t chash;
+    hash_value_t harray[6] = {0};
+    builtin_ft farray[6] = {0};
+
+    if (command == 0)
+	return (0);
+    chash = hash_str(str_cstr(command));
+    harray[0] = hash_str("cd");
+    harray[1] = hash_str("exit");
+    harray[2] = hash_str("env");
+    harray[3] = hash_str("setenv");
+    harray[4] = hash_str("unsetenv");
+    farray[0] = builtin_cd;
+    farray[1] = builtin_exit;
+    farray[2] = builtin_env;
+    farray[3] = builtin_setenv;
+    farray[4] = builtin_unsetenv;
+    return (h_to_b(chash, harray, farray));
+}
+
+uint_t eval_prompt(string_t const *prompt)
+{
+    string_t *command = 0;
+    list_t *args = 0;
+    map_t *processed = 0;
+
+    if (prompt == 0)
+	return (84);
+    processed = match(str_cstr(prompt), bi_command_pattern());
+    command = (string_t*)map_get(processed, 1);
+    args = str_split(map_get(processed, 2), ' ');
+    return (200);
+}
+
 uint_t exec_command(string_t const *command, string_t const *path)
 {
     exec_builtin_cd(command);

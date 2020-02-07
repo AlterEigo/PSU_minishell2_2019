@@ -22,5 +22,6 @@ nfa_node_t *bi_exit_pattern();
 nfa_node_t *bi_setenv_pattern();
 nfa_node_t *bi_env_pattern();
 nfa_node_t *bi_unsetenv_pattern();
+nfa_node_t *bi_command_pattern();
 
 #endif

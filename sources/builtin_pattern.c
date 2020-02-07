@@ -103,3 +103,13 @@ nfa_node_t *bi_unsetenv_pattern()
     opts[10] = (node_opt_t){0, NFA_FINAL | NFA_LOOPED, (int[]){3, 0, 1}, 9};
     return (create_expression(opts, 11));
 }
+
+nfa_node_t *bi_command_pattern()
+{
+    node_opt_t opts[3];
+
+    opts[0] = (node_opt_t){0, NFA_FINAL | NFA_LOOPED, (int[]){3, 0, 1}, -1};
+    opts[1] = (node_opt_t){" \n", NFA_FINAL | NFA_LOOPED, (int[]){2, 0}, 0};
+    opts[2] = (node_opt_t){0, NFA_FINAL | NFA_LOOPED, (int[]){3, 0, 2}, 0};
+    return (create_expression(opts, 3));
+}
