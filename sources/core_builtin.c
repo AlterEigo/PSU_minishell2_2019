@@ -97,10 +97,32 @@ uint_t exec_builtin_setenv(string_t const *command)
         else
             value = str_create("");
         set_envvar(str_cstr(key), str_cstr(value));
-    } else if (matched && arg_list != 0 && list_len(arg_list) < 3) {
+    } else if (matched && arg_list != 0 && list_len(arg_list) > 2) {
         print_cerr("setenv", "Too many arguments");
+	res = 84;
     } else if (matched)
         print_env();
+    list_free(&arg_list);
+    return (res);
+}
+
+uint_t exec_builtin_unsetenv(string_t const *command)
+{
+    uint_t res = 0;
+    bool_t matched = FALSE;
+    list_t *arg_list = 0;
+    string_t *key = 0;
+    string_t *value = 0;
+
+    arg_list = get_args_if_matched(command, bi_unsetenv_pattern(), &matched);
+    if (matched && arg_list != 0 && list_len(arg_list) < 2) {
+	key = (string_t*)list_data(list_begin(arg_list));
+	unset_envvar(str_cstr(key));
+    } else if (matched && arg_list != 0 && list_len(arg_list) > 1) {
+	print_cerr("unsetenv", "Too many arguments");
+	res = 84;
+    } else if (matched)
+	print_env();
     list_free(&arg_list);
     return (res);
 }

@@ -21,6 +21,23 @@
 #include "match.h"
 #include "builtin_pattern.h"
 
+static iterator_t env_key_exists(string_t const *key)
+{
+    env_map_t *env = env_manager(GETENV, 0);
+    string_t *cur = 0;
+    iterator_t it;
+
+    if (key == 0)
+        return (list_end(env->keys));
+    it = list_begin(env->keys);
+    for (uint_t i = 0; i < list_len(env->keys); i++, it = it_next(it)) {
+        cur = (string_t*)list_data(it);
+        if (str_cmp(cur, key) == TRUE)
+            return (it);
+    }
+    return (list_end(env->keys));
+}
+
 string_t *get_cwd()
 {
     char *buffer = 0;
@@ -125,21 +142,24 @@ uint_t set_envvar(cchar_t var, cchar_t value)
     return (0);
 }
 
-static iterator_t env_key_exists(string_t const *key)
+uint_t unset_envvar(cchar_t var)
 {
-    env_map_t *env = env_manager(GETENV, 0);
-    string_t *cur = 0;
+    string_t *cvar = 0;
+    env_map_t *environment = 0;
     iterator_t it;
 
-    if (key == 0)
-        return (list_end(env->keys));
-    it = list_begin(env->keys);
-    for (uint_t i = 0; i < list_len(env->keys); i++, it = it_next(it)) {
-        cur = (string_t*)list_data(it);
-        if (str_cmp(cur, key) == TRUE)
-            return (it);
+    if (var == 0)
+	return (84);
+    environment = env_manager(GETENV, 0);
+    cvar = str_create(var);
+    it = env_key_exists(cvar);
+    if (!list_final(environment->keys, it)) {
+	cvar = (string_t*)list_pull(environment->keys, it);
+	str_free(&cvar);
+	cvar = (string_t*)map_pull(environment->val_map, hash_str(var));
+	str_free(&cvar);
     }
-    return (list_end(env->keys));
+    return (0);
 }
 
 void env_add_key(cchar_t ckey)
@@ -152,9 +172,8 @@ void env_add_key(cchar_t ckey)
         return;
     key = str_create(ckey);
     it = env_key_exists(key);
-    if (list_final(env->keys, it)) {
+    if (list_final(env->keys, it))
         list_push_back(env->keys, key);
-    }
     str_free(&key);
 }
 
