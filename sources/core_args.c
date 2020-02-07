@@ -30,25 +30,47 @@ static builtin_ft h_to_b(hash_value_t hs, hash_value_t ha[], builtin_ft fa[])
     return (0);
 }
 
+static hash_value_t *get_hash_array()
+{
+    static hash_value_t harray[6] = {0};
+    static bool init = FALSE;
+
+    if (!init) {
+	harray[0] = hash_str("cd");
+	harray[1] = hash_str("exit");
+	harray[2] = hash_str("env");
+	harray[3] = hash_str("setenv");
+	harray[4] = hash_str("unsetenv");
+	init = TRUE;
+    }
+    return (harray);
+}
+
+static builtin_ft *get_builtin_array()
+{
+    static builtin_ft farray[6] = {0};
+    static bool init = FALSE;
+
+    if (!init) {
+	farray[0] = builtin_cd;
+	farray[1] = builtin_exit;
+	farray[2] = builtin_env;
+	farray[3] = builtin_setenv;
+	farray[4] = builtin_unsetenv;
+	init = TRUE;
+    }
+    return (farray);
+}
+
 builtin_ft get_builtin(string_t const *command)
 {
     hash_value_t chash;
-    hash_value_t harray[6] = {0};
-    builtin_ft farray[6] = {0};
+    hash_value_t *harray = get_hash_array();
+    builtin_ft *farray = get_builtin_array();
 
     if (command == 0)
 	return (0);
     chash = hash_str(str_cstr(command));
-    harray[0] = hash_str("cd");
-    harray[1] = hash_str("exit");
-    harray[2] = hash_str("env");
-    harray[3] = hash_str("setenv");
-    harray[4] = hash_str("unsetenv");
-    farray[0] = builtin_cd;
-    farray[1] = builtin_exit;
-    farray[2] = builtin_env;
-    farray[3] = builtin_setenv;
-    farray[4] = builtin_unsetenv;
     return (h_to_b(chash, harray, farray));
 }
 
