@@ -64,4 +64,6 @@ void print_cerr(cchar_t cmd, cchar_t msg)
     write(2, " : ", 4);
     write(2, str_cstr(smsg), str_len(smsg));
     write(2, ".\n", 3);
+    str_free(&scmd);
+    str_free(&smsg);
 }

@@ -47,6 +47,7 @@ int change_dir(cchar_t ndir)
 int change_sdir(string_t const *dir)
 {
     string_t *path = 0;
+    int res = 0;
 
     if (dir == 0)
         return (84);
@@ -55,9 +56,8 @@ int change_sdir(string_t const *dir)
     if (chdir(str_cstr(path)) != 0)
         if (chdir(str_cstr(dir)) != 0) {
             print_cerr("cd", 0);
-            str_free(&path);
-            return (84);
+            res = 84;
         }
     str_free(&path);
-    return (0);
+    return (res);
 }
