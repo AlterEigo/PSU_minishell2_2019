@@ -74,22 +74,39 @@ builtin_ft get_builtin(string_t const *command)
     return (h_to_b(chash, harray, farray));
 }
 
+static string_t *interpret_cmd(string_t const *prompt, list_t **args)
+{
+    nfa_node_t *pattern = bi_command_pattern();
+    map_t *processed = 0;
+    string_t *cmd = 0;
+
+    processed = match(str_cstr(prompt), pattern);
+    cmd = (string_t*)map_get(processed, 1);
+    cmd = str_create(str_cstr(cmd));
+    if (args != 0)
+	(*args) = str_split(map_get(processed, 2), ' ');
+    map_free(&processed);
+    nfa_free(&pattern);
+    return (cmd);
+}
+
 uint_t eval_prompt(string_t const *prompt)
 {
     string_t *command = 0;
     builtin_ft function = 0;
     list_t *args = 0;
-    map_t *processed = 0;
+    uint_t res = 0;
 
     if (prompt == 0)
 	return (84);
-    processed = match(str_cstr(prompt), bi_command_pattern());
-    command = (string_t*)map_get(processed, 1);
-    args = str_split(map_get(processed, 2), ' ');
+    command = interpret_cmd(prompt, &args);
     function = get_builtin(command);
     if (function != 0)
-	return (function(args));
-    else
+	res = function(args);
+    else {
+	res = 84;
 	print_cerr(str_cstr(command), "Command not found");
-    return (84);
+    }
+    str_free(&command);
+    return (res);
 }
