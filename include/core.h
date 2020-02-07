@@ -33,7 +33,7 @@ string_t *get_cwd();
 string_t *prompt_line();
 void print_cchar(cchar_t str);
 void print_cerr(cchar_t cmd, cchar_t msg);
-void concat_path(string_t **rpath, string_t *part);
+void concat_path(string_t **rpath, string_t const *part);
 int change_dir(cchar_t ndir);
 int change_sdir(string_t const *ndir);
 uint_t builtin_cd(list_t *args);

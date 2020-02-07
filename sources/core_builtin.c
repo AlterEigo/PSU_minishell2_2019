@@ -23,9 +23,12 @@ uint_t builtin_cd(list_t *args)
 {
     int res = 0;
     string_t *arg = 0;
+    string_t *var = 0;
 
     if (args == 0 || list_len(args) == 0) {
-	res = change_sdir(get_envvar("HOME"));
+	var = get_envvar("HOME");
+	res = change_sdir(var);
+	str_free(&var);
     } else if (list_len(args) == 1) {
 	arg = (string_t*)list_data(list_begin(args));
 	res = change_sdir(arg);

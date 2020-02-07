@@ -93,6 +93,7 @@ void print_env()
         write(1, "=", 1);
         if (value != 0)
             print_cchar(str_cstr(value));
+	str_free(&value);
         write(1, "\n", 1);
     }
 }

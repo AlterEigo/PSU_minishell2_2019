@@ -107,6 +107,7 @@ uint_t eval_prompt(string_t const *prompt)
 	res = 84;
 	print_cerr(str_cstr(command), "Command not found");
     }
+    list_free(&args);
     str_free(&command);
     return (res);
 }

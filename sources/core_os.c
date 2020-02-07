@@ -19,7 +19,7 @@
 #include "match.h"
 #include "builtin_pattern.h"
 
-void concat_path(string_t **rpath, string_t *part)
+void concat_path(string_t **rpath, string_t const *part)
 {
     string_t *tmp = 0;
     string_t *path = *rpath;
@@ -36,27 +36,28 @@ void concat_path(string_t **rpath, string_t *part)
 
 int change_dir(cchar_t ndir)
 {
-    string_t *dir = 0;
+    int res = 0;
+    string_t *str = str_create(ndir);
+
+    res = change_sdir(str);
+    str_free(&str);
+    return (res);
+}
+
+int change_sdir(string_t const *dir)
+{
     string_t *path = 0;
 
-    if (ndir == 0)
+    if (dir == 0)
         return (84);
     path = get_cwd();
-    dir = str_create(ndir);
     concat_path(&path, dir);
     if (chdir(str_cstr(path)) != 0)
         if (chdir(str_cstr(dir)) != 0) {
             print_cerr("cd", 0);
-            str_free(&dir);
             str_free(&path);
             return (84);
         }
-    str_free(&dir);
     str_free(&path);
     return (0);
-}
-
-int change_sdir(string_t const *ndir)
-{
-    return (change_dir(str_cstr(ndir)));
 }
