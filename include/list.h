@@ -33,7 +33,7 @@ iterator_t list_begin(list_t *list);
 iterator_t list_end(list_t *list);
 bool_t list_final(list_t *list, iterator_t it);
 bool_t list_start(list_t *list, iterator_t it);
-unsigned int list_len(list_t *list);
+unsigned int list_len(list_t const *list);
 void *list_data(iterator_t it);
 void list_push_back(list_t *list, void *data);
 void list_push_front(list_t *list, void *data);

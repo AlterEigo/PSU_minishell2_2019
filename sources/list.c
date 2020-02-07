@@ -207,7 +207,7 @@ iterator_t list_end(list_t *list)
     return (*list->end);
 }
 
-unsigned int list_len(list_t *list)
+unsigned int list_len(list_t const *list)
 {
     return (list->size);
 }

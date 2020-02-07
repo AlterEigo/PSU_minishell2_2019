@@ -19,110 +19,84 @@
 #include "match.h"
 #include "builtin_pattern.h"
 
-uint_t exec_builtin_cd(string_t const *command)
+uint_t builtin_cd(list_t *args)
 {
-    string_t *arg = 0;
-    list_t *arg_list = 0;
-    bool_t matched = FALSE;
     int res = 0;
+    string_t *arg = 0;
 
-    if (command == 0)
-        return (84);
-    arg_list = get_args_if_matched(command, bi_cd_pattern(), &matched);
-    res = (arg_list == 0 && matched) ? change_sdir(get_envvar("HOME")) : res;
-    if (matched && arg_list != 0) {
-        if (list_len(arg_list) == 1) {
-            arg = (string_t*)list_data(list_begin(arg_list));
-            res = change_dir(str_cstr(arg));
-        } else {
-            print_cerr("cd", "Too many arguments");
-            res = 84;
-        }
-    }
-    list_free(&arg_list);
-    return (res);
-}
-
-uint_t exec_builtin_exit(string_t const *command)
-{
-    list_t *arg_list = 0;
-    uint_t res = 0;
-    bool_t matched = FALSE;
-
-    if (command == 0)
-        return (84);
-    arg_list = get_args_if_matched(command, bi_exit_pattern(), &matched);
-    if (arg_list != 0) {
-        print_cerr("exit", "Invalid Syntax");
-        res = 84;
-    }
-    if (arg_list == 0 && matched) {
-        print_cchar("exit\n");
-        res = 200;
-    }
-    list_free(&arg_list);
-    return (res);
-}
-
-uint_t exec_builtin_env(string_t const *command)
-{
-    list_t *arg_list = 0;
-    uint_t res = 0;
-    bool_t matched = FALSE;
-
-    if (command == 0)
-        return (84);
-    arg_list = get_args_if_matched(command, bi_env_pattern(), &matched);
-    if (matched && arg_list == 0)
-        print_env();
-    else
-        res = 84;
-    list_free(&arg_list);
-    return (res);
-}
-
-uint_t exec_builtin_setenv(string_t const *command)
-{
-    uint_t res = 0;
-    bool_t matched = FALSE;
-    list_t *arg_list = 0;
-    string_t *key = 0;
-    string_t *value = 0;
-
-    arg_list = get_args_if_matched(command, bi_setenv_pattern(), &matched);
-    if (matched && arg_list != 0 && list_len(arg_list) < 3) {
-        key = (string_t*)list_data(list_begin(arg_list));
-        if (list_len(arg_list) > 1)
-            value = (string_t*)list_data(it_next(list_begin(arg_list)));
-        else
-            value = str_create("");
-        set_envvar(str_cstr(key), str_cstr(value));
-    } else if (matched && arg_list != 0 && list_len(arg_list) > 2) {
-        print_cerr("setenv", "Too many arguments");
+    if (args == 0 || list_len(args) == 0) {
+	res = change_sdir(get_envvar("HOME"));
+    } else if (list_len(args) == 1) {
+	arg = (string_t*)list_data(list_begin(args));
+	res = change_sdir(arg);
+    } else {
+	print_cerr("cd", "Too many arguments");
 	res = 84;
-    } else if (matched)
-        print_env();
-    list_free(&arg_list);
+    }
     return (res);
 }
 
-uint_t exec_builtin_unsetenv(string_t const *command)
+uint_t builtin_exit(list_t *args)
 {
     uint_t res = 0;
-    bool_t matched = FALSE;
-    list_t *arg_list = 0;
-    string_t *key = 0;
-    string_t *value = 0;
 
-    arg_list = get_args_if_matched(command, bi_unsetenv_pattern(), &matched);
-    if (matched && arg_list != 0 && list_len(arg_list) < 2) {
-	key = (string_t*)list_data(list_begin(arg_list));
-	unset_envvar(str_cstr(key));
-    } else if (matched && arg_list != 0 && list_len(arg_list) > 1) {
-	print_cerr("unsetenv", "Too many arguments");
+    if (args == 0 || list_len(args) == 0)
+	res = 200;
+    else {
 	res = 84;
-    } else if (matched)
+	print_cerr("exit", "Too many arguments");
+    }
+    return (res);
+}
+
+uint_t builtin_env(list_t *args)
+{
+    uint_t res = 0;
+
+    if (args == 0 || list_len(args) == 0) {
 	print_env();
-    list_free(&arg_list);
+    } else {
+	res = 84;
+	print_cerr("env", "Too many arguments");
+    }
+    return (res);
+}
+
+uint_t builtin_setenv(list_t *args)
+{
+    uint_t res = 0;
+    string_t *key = 0;
+    string_t *value = 0;
+
+    if (args == 0 || list_len(args) == 0) {
+	print_env();
+    } else if (list_len(args) > 2) {
+	res = 84;
+	print_cerr("setenv", "Too many arguments");
+    } else {
+	key = (string_t*)list_data(list_begin(args));
+	value = (string_t*)list_data(it_next(list_begin(args)));
+	if (value == 0)
+	    set_envvar(str_cstr(key), "");
+	else
+	    set_envvar(str_cstr(key), str_cstr(value));
+    }
+    return (res);
+}
+
+uint_t builtin_unsetenv(list_t *args)
+{
+    uint_t res = 0;
+    string_t *key = 0;
+
+    if (args == 0 || list_len(args) == 0) {
+	print_env();
+    } else if (list_len(args) > 1) {
+	res = 84;
+	print_cerr("unsetenv", "Too many arguments");
+    } else {
+	key = (string_t*)list_data(list_begin(args));
+	unset_envvar(str_cstr(key));
+    }
     return (res);
 }

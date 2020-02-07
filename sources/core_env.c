@@ -136,7 +136,7 @@ uint_t set_envvar(cchar_t var, cchar_t value)
     env_add_key(var);
     cvar = (string_t*)map_pull(environment, hash_str(var));
     str_free(&cvar);
-    cvar = str_create(value);
+    cvar = (value == 0) ? str_create("") : str_create(value);
     map_insert(environment, hash_str(var), cvar);
     str_free(&cvar);
     return (0);
