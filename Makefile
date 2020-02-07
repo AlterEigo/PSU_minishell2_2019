@@ -80,7 +80,7 @@ vpath %.c $(SOURCE_DIR)
 ############################
 
 
-SOURCES_LIST	=	main.c \
+SOURCES_LIST	=			main.c \
 					hash_table.c \
 					list.c \
 					string.c \
@@ -102,7 +102,7 @@ LIBRARY			=
 ############################
 
 
-CC				=	gcc
+CC			=	gcc
 C_FLAGS			=	-W -Wall -Wextra -Werror \
 					-I$(HEADER_DIR) \
 					-Wno-switch \
@@ -115,6 +115,11 @@ C_FLAGS			=	-W -Wall -Wextra -Werror \
 L_FLAGS			=	-L$(LIBRARY_DIR) -lncurses \
 					$(L_FLAGS_INPUT)
 COV_FLAGS		=	-fprofile-arcs -ftest-coverage
+VALGRIND_FLAGS		=	--leak-check=full \
+				--show-leak-kinds=all \
+				--track-origins=yes \
+				--verbose \
+				--log-file=valgrind-out.txt
 
 
 ############################
@@ -123,7 +128,7 @@ COV_FLAGS		=	-fprofile-arcs -ftest-coverage
 
 
 OBJECTS			=	$(patsubst %.c, $(OBJECT_DIR)/%.o, $(SOURCES_LIST))
-NON_M_OBJECTS	=	$(patsubst %main.o, , $(OBJECTS))
+NON_M_OBJECTS		=	$(patsubst %main.o, , $(OBJECTS))
 
 
 ############################
@@ -140,6 +145,10 @@ all: directories $(LIBRARY) $(TARGET_NAME)
 debug:
 	@make re C_FLAGS_INPUT=-g\ -g3 --no-print-directory
 	@gdb ./$(TARGET_NAME) -ex "break main" -ex "run $(GDB_ARGV)"
+
+valgrind:
+	@make re C_FLAGS_INPUT=-g\ -g3 --no-print-directory
+	@valgrind $(VALGRIND_FLAGS) ./$(TARGET_NAME) $(VALGRIND_INJECT)
 
 
 library: $(LIBRARY)
