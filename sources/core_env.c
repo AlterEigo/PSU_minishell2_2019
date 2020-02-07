@@ -154,6 +154,7 @@ uint_t unset_envvar(cchar_t var)
     environment = env_manager(GETENV, 0);
     cvar = str_create(var);
     it = env_key_exists(cvar);
+    str_free(&cvar);
     if (!list_final(environment->keys, it)) {
 	cvar = (string_t*)list_pull(environment->keys, it);
 	str_free(&cvar);
