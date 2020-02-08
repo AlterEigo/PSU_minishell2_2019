@@ -46,12 +46,18 @@ void prompt_loop()
     str_free(&path);
 }
 
-int main(int argc, char **argv, char **envp)
+int main_2(int argc, char **argv, char **envp)
 {
     pid_t pid, wpid;
     int ret;
     char *lscmd[] = { "/usr/bin/ls", "-l", (char*)0 };
+    string_t *env_path = 0;
+    list_t *dirs = 0;
 
+    env_manager(SETENV, envp);
+    env_path = get_envvar("PATH");
+    dirs = str_split(env_path, ':');
+    str_free(&env_path);
     pid = fork();
     if (pid == -1) {
 	print_cerr("fork","Unable to correctly fork the process");
@@ -81,9 +87,12 @@ int main(int argc, char **argv, char **envp)
 	    }
 	} while (!WIFEXITED(ret) && !WIFSIGNALED(ret));
     }
+    list_free(&dirs);
+    env_manager(FREE, 0);
+    return (0);
 }
 
-int main_2(int argc, char **argv, char **env)
+int main(int argc, char **argv, char **env)
 {
     env_manager(SETENV, env);
     prompt_loop();
