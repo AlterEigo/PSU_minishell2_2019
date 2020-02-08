@@ -46,7 +46,17 @@ void prompt_loop()
     str_free(&path);
 }
 
-int main_2(int argc, char **argv, char **envp)
+void handle_sigint(int sig)
+{
+    string_t *pwd = get_cwd();
+
+    print_cchar("\n");
+    str_print(pwd);
+    print_cchar(" > ");
+    str_free(&pwd);
+}
+
+int main2(int argc, char **argv, char **envp)
 {
     pid_t pid, wpid;
     int ret;
@@ -94,6 +104,7 @@ int main_2(int argc, char **argv, char **envp)
 
 int main(int argc, char **argv, char **env)
 {
+    signal(SIGINT, handle_sigint);
     env_manager(SETENV, env);
     prompt_loop();
     env_manager(FREE, 0);
