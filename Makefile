@@ -112,8 +112,8 @@ C_FLAGS			=	-W -Wall -Wextra -Werror \
 					-Wno-unused-but-set-parameter \
 					-Wno-unused-function \
 					$(C_FLAGS_INPUT)
-L_FLAGS			=	-L$(LIBRARY_DIR) -lncurses \
-					$(L_FLAGS_INPUT)
+L_FLAGS			=	-L$(LIBRARY_DIR) \
+				$(L_FLAGS_INPUT)
 COV_FLAGS		=	-fprofile-arcs -ftest-coverage
 VALGRIND_FLAGS		=	--leak-check=full \
 				--show-leak-kinds=all \
