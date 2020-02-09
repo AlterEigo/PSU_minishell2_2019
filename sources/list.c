@@ -209,6 +209,8 @@ iterator_t list_end(list_t *list)
 
 unsigned int list_len(list_t const *list)
 {
+    if (list == 0)
+	return (0);
     return (list->size);
 }
 

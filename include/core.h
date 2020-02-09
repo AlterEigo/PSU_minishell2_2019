@@ -41,7 +41,7 @@ uint_t builtin_exit(list_t *args);
 uint_t builtin_env(list_t *args);
 uint_t builtin_setenv(list_t *args);
 uint_t builtin_unsetenv(list_t *args);
-uint_t exec_extern(string_t *cmd, list_t *args);
+uint_t eval_extern(string_t const *cmd, list_t *args);
 
 uint_t eval_prompt(string_t const *prompt);
 void print_env();

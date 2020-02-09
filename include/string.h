@@ -23,6 +23,7 @@ string_t *str_create(const cchar_t cstr);
 string_t *str_wcreate(char *cstr);
 void str_free(string_t **str);
 cchar_t str_cstr(string_t const *str);
+char *str_to_cstr(string_t const *str);
 string_t *str_dup(string_t const *str);
 string_t *str_concat(string_t const *lhs, string_t const *rhs);
 string_t *str_cconcat(cchar_t lhs, cchar_t rhs);

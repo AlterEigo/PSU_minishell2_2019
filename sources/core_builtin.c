@@ -106,7 +106,47 @@ uint_t builtin_unsetenv(list_t *args)
     return (res);
 }
 
-uint_t exec_extern(string_t *cmd, list_t *args)
+static bool_t is_abs_path(string_t const *cmd)
+{
+    if (cmd == 0 || str_len(cmd) < 2)
+	return (FALSE);
+    if (str_cstr(cmd)[0] == '/')
+	return (TRUE);
+    else
+	return (FALSE);
+}
+
+static bool_t is_a_path(string_t const *cmd)
+{
+    if (cmd == 0 || str_len(cmd) < 1)
+	return (FALSE);
+    if (str_count(cmd, '/') > 0)
+	return (TRUE);
+    else
+	return (FALSE);
+}
+
+static int exec_try(string_t const *cmd, list_t *args)
+{
+    char **cargs = 0;
+    iterator_t it;
+
+    if (cmd == 0)
+	return (-1);
+    cargs = malloc(sizeof(char*) * (list_len(args) + 2));
+    it = (args != 0) ? list_begin(args) : it;
+    cargs[0] = str_to_cstr(cmd);
+    for (uint_t i = 0; i < list_len(args); i++, it = it_next(it)) {
+	cargs[i + 1] = str_to_cstr(list_data(it));
+    }
+    cargs[list_len(args) + 2] = 0;
+    if (is_a_path(cmd)) {
+	execve(str_cstr(cmd), cargs, 0);
+    }
+    return (-1);
+}
+
+uint_t eval_extern(string_t const *cmd, list_t *args)
 {
     pid_t ret_pid = fork();
     int status;
@@ -115,11 +155,14 @@ uint_t exec_extern(string_t *cmd, list_t *args)
 	print_cerr("fork", 0);
 	return (84);
     } else if (ret_pid == 0) {
-	
-	exit(EXIT_SUCCESS);
+	if (exec_try(cmd, args) == -1)
+	    exit(EXIT_FAILURE);
     } else {
 	do {
 	    waitpid(ret_pid, &status, WCONTINUED | WUNTRACED);
+	    if (WIFSIGNALED(status)) {
+		print_cerr("child process", "Segfault");
+	    }
 	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
     return (0);
