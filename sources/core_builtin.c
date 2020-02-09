@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 #include "core.h"
 #include "common_types.h"
@@ -102,4 +104,23 @@ uint_t builtin_unsetenv(list_t *args)
 	unset_envvar(str_cstr(key));
     }
     return (res);
+}
+
+uint_t exec_extern(string_t *cmd, list_t *args)
+{
+    pid_t ret_pid = fork();
+    int status;
+
+    if (ret_pid == -1) {
+	print_cerr("fork", 0);
+	return (84);
+    } else if (ret_pid == 0) {
+	
+	exit(EXIT_SUCCESS);
+    } else {
+	do {
+	    waitpid(ret_pid, &status, WCONTINUED | WUNTRACED);
+	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    }
+    return (0);
 }

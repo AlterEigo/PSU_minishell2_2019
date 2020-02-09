@@ -104,8 +104,10 @@ uint_t eval_prompt(string_t const *prompt)
     if (function != 0)
 	res = function(args);
     else {
-	res = 84;
-	print_cerr(str_cstr(command), "Command not found");
+	if (exec_extern(command, args) == 84) {
+	    res = 84;
+	    print_cerr(str_cstr(command), "Command not found");
+	}
     }
     list_free(&args);
     str_free(&command);
