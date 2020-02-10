@@ -126,6 +126,39 @@ static bool_t is_a_path(string_t const *cmd)
 	return (FALSE);
 }
 
+static string_t *find_in_path(string_t const *file)
+{
+    string_t *path = (file == 0) ? 0 : get_envvar("PATH");
+    list_t *dirs = (file == 0) ? 0 : str_split(path, ':');
+    iterator_t it;
+    string_t *cur = 0;
+
+    if (file == 0)
+	return (0);
+    it = (dirs == 0) ? it : list_begin(dirs);
+    for (; !list_final(dirs, it); it = it_next(it)) {
+	cur = str_copy(list_data(it));
+	concat_path(&cur, file);
+	if (access(str_cstr(cur), F_OK) == 0)
+	    return (cur);
+	str_free(&cur);
+    }
+    return (0);
+}
+
+static int exec_system(string_t const *cmd, char **cargs, char **envp)
+{
+    string_t *path = 0;
+
+    if (cmd == 0 || cargs == 0)
+	return (-1);
+    path = find_in_path(cmd);
+    if (path != 0) {
+	return (execve(str_cstr(path), cargs, envp));
+    }
+    return (-1);
+}
+
 static int exec_try(string_t const *cmd, list_t *args)
 {
     char **cargs = 0;
@@ -139,10 +172,11 @@ static int exec_try(string_t const *cmd, list_t *args)
     for (uint_t i = 0; i < list_len(args); i++, it = it_next(it)) {
 	cargs[i + 1] = str_to_cstr(list_data(it));
     }
-    cargs[list_len(args) + 2] = 0;
-    if (is_a_path(cmd)) {
+    cargs[list_len(args) + 1] = 0;
+    if (is_a_path(cmd))
 	execve(str_cstr(cmd), cargs, 0);
-    }
+    else
+	exec_system(cmd, cargs, 0);
     return (-1);
 }
 
@@ -162,6 +196,7 @@ uint_t eval_extern(string_t const *cmd, list_t *args)
 	    waitpid(ret_pid, &status, WCONTINUED | WUNTRACED);
 	    if (WIFSIGNALED(status)) {
 		print_cerr("child process", "Segfault");
+		return (84);
 	    }
 	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
