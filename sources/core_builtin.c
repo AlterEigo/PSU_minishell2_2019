@@ -163,6 +163,7 @@ static int exec_try(string_t const *cmd, list_t *args)
 {
     char **cargs = 0;
     iterator_t it;
+    char **envp = env_to_char();
 
     if (cmd == 0)
 	return (-1);
@@ -174,9 +175,9 @@ static int exec_try(string_t const *cmd, list_t *args)
     }
     cargs[list_len(args) + 1] = 0;
     if (is_a_path(cmd))
-	execve(str_cstr(cmd), cargs, 0);
+	execve(str_cstr(cmd), cargs, envp);
     else
-	exec_system(cmd, cargs, 0);
+	exec_system(cmd, cargs, envp);
     return (-1);
 }
 

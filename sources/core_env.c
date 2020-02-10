@@ -38,20 +38,23 @@ static iterator_t env_key_exists(string_t const *key)
     return (list_end(env->keys));
 }
 
+char **env_to_char()
+{
+    env_map_t *env = env_manager(GETENV, 0);
+    iterator_t it;
+    char **ret = malloc(sizeof(char*) * (list_len(env->keys) + 1));
+
+    it = list_begin(env->keys);
+    for (uint_t i = 0; !list_final(env->keys, it); it = it_next(it), i++) {
+	ret[i] = str_to_cstr(list_data(it));
+    }
+    ret[list_len(env->keys)] = 0;
+    return (ret);
+}
+
 string_t *get_cwd()
 {
-    char *buffer = 0;
-    size_t b_size = 512;
-    string_t *cwd = 0;
-
-    buffer = malloc(sizeof(char) * b_size);
-    if (getcwd(buffer, b_size) == 0) {
-        if (buffer != 0)
-            free(buffer);
-        return (0);
-    }
-    cwd = str_wcreate(buffer);
-    return (cwd);
+    return (get_envvar("PWD"));
 }
 
 env_map_t env_to_map(char **envp)

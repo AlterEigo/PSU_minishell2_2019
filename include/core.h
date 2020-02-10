@@ -22,6 +22,7 @@ typedef uint_t (*builtin_ft)(list_t *args);
 
 char *strerror(int code);
 
+char **env_to_char();
 env_map_t env_to_map(char **envp);
 env_map_t *env_manager(env_option_t opt, char **environment);
 string_t *get_envvar(cchar_t var);
