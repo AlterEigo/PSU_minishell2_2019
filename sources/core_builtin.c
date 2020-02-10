@@ -159,21 +159,30 @@ static int exec_system(string_t const *cmd, char **cargs, char **envp)
     return (-1);
 }
 
-static int exec_try(string_t const *cmd, list_t *args)
+static char **to_cargs(string_t const *cmd, list_t *args)
 {
     char **cargs = 0;
     iterator_t it;
-    char **envp = env_to_char();
+    char **envp = (cmd == 0) ? 0 : env_to_char();
 
     if (cmd == 0)
-	return (-1);
+	return (0);
     cargs = malloc(sizeof(char*) * (list_len(args) + 2));
     it = (args != 0) ? list_begin(args) : it;
     cargs[0] = str_to_cstr(cmd);
-    for (uint_t i = 0; i < list_len(args); i++, it = it_next(it)) {
+    for (uint_t i = 0; i < list_len(args); i++, it = it_next(it))
 	cargs[i + 1] = str_to_cstr(list_data(it));
-    }
     cargs[list_len(args) + 1] = 0;
+    return (cargs);
+}
+
+static int exec_try(string_t const *cmd, list_t *args)
+{
+    char **cargs = (cmd == 0) ? 0 : to_cargs(cmd, args);
+    char **envp = (cmd == 0) ? 0 : env_to_char();
+
+    if (cmd == 0)
+	return (-1);
     if (is_a_path(cmd))
 	execve(str_cstr(cmd), cargs, envp);
     else
@@ -187,19 +196,14 @@ uint_t eval_extern(string_t const *cmd, list_t *args)
     int status;
 
     if (ret_pid == -1) {
-	print_cerr("fork", 0);
 	return (84);
     } else if (ret_pid == 0) {
 	if (exec_try(cmd, args) == -1)
 	    exit(EXIT_FAILURE);
     } else {
-	do {
-	    waitpid(ret_pid, &status, WCONTINUED | WUNTRACED);
-	    if (WIFSIGNALED(status)) {
-		print_cerr("child process", "Segfault");
-		return (84);
-	    }
-	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+	waitpid(ret_pid, &status, WCONTINUED | WUNTRACED);
+	if (WIFSIGNALED(status) || WIFEXITED(status) == 0)
+	    return (84);
     }
     return (0);
 }

@@ -43,10 +43,17 @@ char **env_to_char()
     env_map_t *env = env_manager(GETENV, 0);
     iterator_t it;
     char **ret = malloc(sizeof(char*) * (list_len(env->keys) + 1));
+    string_t *cur = 0;
+    string_t *tmp = 0;
 
     it = list_begin(env->keys);
-    for (uint_t i = 0; !list_final(env->keys, it); it = it_next(it), i++) {
-	ret[i] = str_to_cstr(list_data(it));
+    for (uint_t i = 0; i < list_len(env->keys); it = it_next(it), i++) {
+	cur = (string_t*)list_data(it);
+	tmp = str_addch(cur, '=');
+	cur = str_concat(tmp, map_get(env->val_map, hash_str(str_cstr(cur))));
+	ret[i] = str_to_cstr(cur);
+	str_free(&cur);
+	str_free(&tmp);
     }
     ret[list_len(env->keys)] = 0;
     return (ret);
