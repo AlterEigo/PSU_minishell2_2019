@@ -58,9 +58,16 @@ void handle_sigint(int sig)
 
 int main(int argc, char **argv, char **env)
 {
+    string_t *arg = 0;
+
     signal(SIGINT, handle_sigint);
     env_manager(SETENV, env);
-    prompt_loop();
+    if (argv[1] != 0) {
+	arg = str_create(argv[1]);
+	eval_prompt(arg);
+	str_free(&arg);
+    } else
+	prompt_loop();
     env_manager(FREE, 0);
     return (0);
 }

@@ -106,9 +106,8 @@ char *str_to_cstr(string_t const *str)
     if (str == 0)
 	return (0);
     nstr = malloc(sizeof(char) * (str->length + 1));
-    for (uint_t i = 0; i < str->length; i++) {
+    for (uint_t i = 0; i < str->length; i++)
 	nstr[i] = str->cstr[i];
-    }
     nstr[str->length] = 0;
     return (nstr);
 }
