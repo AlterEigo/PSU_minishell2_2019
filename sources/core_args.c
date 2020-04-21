@@ -9,15 +9,12 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include "istl/common_types.h"
+#include "istl/list.h"
+#include "istl/string.h"
+#include "istl/iterator.h"
+#include "istl/hash_table.h"
 #include "core.h"
-#include "common_types.h"
-#include "list.h"
-#include "string.h"
-#include "iterator.h"
-#include "hash_table.h"
-#include "nfa_node.h"
-#include "match.h"
-#include "builtin_pattern.h"
 
 static builtin_ft h_to_b(hash_value_t hs, hash_value_t ha[], builtin_ft fa[])
 {

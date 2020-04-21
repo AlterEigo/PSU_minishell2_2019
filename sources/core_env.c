@@ -10,16 +10,13 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include "istl/list.h"
+#include "istl/string.h"
+#include "istl/iterator.h"
+#include "istl/hash_table.h"
+#include "istl/common_types.h"
 #include "core.h"
-#include "common_types.h"
 #include "env_map.h"
-#include "list.h"
-#include "string.h"
-#include "iterator.h"
-#include "hash_table.h"
-#include "nfa_node.h"
-#include "match.h"
-#include "builtin_pattern.h"
 
 static iterator_t env_key_exists(string_t const *key)
 {

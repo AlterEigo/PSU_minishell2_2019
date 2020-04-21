@@ -7,15 +7,12 @@
 #ifndef IS_CORE_H_INCLUDED
 #define IS_CORE_H_INCLUDED
 
-#include "common_types.h"
+#include "istl/common_types.h"
 #include "env_map.h"
-#include "list.h"
-#include "string.h"
-#include "iterator.h"
-#include "hash_table.h"
-#include "nfa_node.h"
-#include "match.h"
-#include "builtin_pattern.h"
+#include "istl/list.h"
+#include "istl/string.h"
+#include "istl/iterator.h"
+#include "istl/hash_table.h"
 
 typedef enum { GETENV, SETENV, FREE } env_option_t;
 typedef uint_t (*builtin_ft)(list_t *args);

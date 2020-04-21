@@ -12,14 +12,11 @@
 #include <sys/wait.h>
 
 #include "core.h"
-#include "common_types.h"
-#include "list.h"
-#include "string.h"
-#include "iterator.h"
-#include "hash_table.h"
-#include "nfa_node.h"
-#include "match.h"
-#include "builtin_pattern.h"
+#include "istl/common_types.h"
+#include "istl/list.h"
+#include "istl/string.h"
+#include "istl/iterator.h"
+#include "istl/hash_table.h"
 
 uint_t builtin_cd(list_t *args)
 {

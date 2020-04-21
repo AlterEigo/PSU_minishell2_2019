@@ -7,8 +7,8 @@
 #ifndef IS_ENV_MAP_H_INCLUDED
 #define IS_ENV_MAP_H_INCLUDED
 
-#include "common_types.h"
-#include "hash_table.h"
+#include "istl/common_types.h"
+#include "istl/hash_table.h"
 
 typedef struct EnvironmentMap {
     map_t *val_map;

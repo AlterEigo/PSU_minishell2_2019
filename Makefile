@@ -69,31 +69,25 @@ SOURCE_DIR			=	sources
 OBJECT_DIR			=	objects
 HEADER_DIR			=	include
 TESTS_DIR			=	tests
-LIBRARY_DIR			=   lib
+LIBRARY_DIR			=	lib
 GDB_ARGV			=
 
 vpath %.c $(SOURCE_DIR)
-
+vpath %.c $(SOURCE_DIR)/$(ISTL_DIR)
 
 ############################
 #### SOURCE FILES ##########
 ############################
 
 
-SOURCES_LIST	=			main.c \
-					hash_table.c \
-					list.c \
-					string.c \
-					iterator.c \
-					utility.c \
-					nfa_node.c \
-					match.c \
-					builtin_pattern.c \
-					core_env.c \
+MAIN_SOURCE	=			main.c
+SOURCES_LIST	=			core_env.c \
 					core_io.c \
 					core_os.c \
 					core_builtin.c \
-					core_args.c
+					core_args.c \
+					$(MAIN_SOURCE) \
+					$(ISTL_MODULE)
 LIBRARY			=
 
 
