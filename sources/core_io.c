@@ -16,6 +16,10 @@
 #include "istl/hash_table.h"
 #include "core.h"
 
+const fnode_t MS_CMD[] = {
+    // FNODE_NULL
+};
+
 string_t *prompt_line()
 {
     size_t b_size = 256;

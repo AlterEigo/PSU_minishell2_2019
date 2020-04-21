@@ -73,17 +73,16 @@ builtin_ft get_builtin(string_t const *command)
 
 static string_t *interpret_cmd(string_t const *prompt, list_t **args)
 {
-    nfa_node_t *pattern = bi_command_pattern();
+    fnode_t const *pattern = MS_CMD;
     map_t *processed = 0;
     string_t *cmd = 0;
 
-    processed = match(str_cstr(prompt), pattern);
+    regex_extract(str_cstr(prompt), pattern, processed);
     cmd = (string_t*)map_get(processed, 1);
     cmd = str_create(str_cstr(cmd));
     if (args != 0)
 	(*args) = str_split(map_get(processed, 2), ' ');
     map_free(&processed);
-    nfa_free(&pattern);
     return (cmd);
 }
 

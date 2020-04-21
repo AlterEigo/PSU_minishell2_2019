@@ -72,6 +72,8 @@ TESTS_DIR			=	tests
 LIBRARY_DIR			=	lib
 GDB_ARGV			=
 
+include $(SOURCE_DIR)/Makefile.istl_sources
+
 vpath %.c $(SOURCE_DIR)
 vpath %.c $(SOURCE_DIR)/$(ISTL_DIR)
 

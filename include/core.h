@@ -13,9 +13,12 @@
 #include "istl/string.h"
 #include "istl/iterator.h"
 #include "istl/hash_table.h"
+#include "istl/utility.h"
 
 typedef enum { GETENV, SETENV, FREE } env_option_t;
 typedef uint_t (*builtin_ft)(list_t *args);
+
+extern const fnode_t MS_CMD[];
 
 char *strerror(int code);
 
