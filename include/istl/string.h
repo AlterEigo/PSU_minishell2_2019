@@ -36,6 +36,7 @@ void str_errprint(string_t const *str);
 uint_t str_len(string_t const *str);
 uint_t str_count(string_t const *str, char c);
 void str_pick(string_t **rstr, char c);
+void str_strip(string_t **rstr);
 list_t *str_split(string_t const *str, char c);
 list_t *str_nsplit(string_t const *str, char c, uint_t count);
 

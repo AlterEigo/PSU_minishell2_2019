@@ -73,15 +73,21 @@ builtin_ft get_builtin(string_t const *command)
 
 static string_t *interpret_cmd(string_t const *prompt, list_t **args)
 {
-    fnode_t const *pattern = MS_CMD;
-    map_t *processed = 0;
+    fnode_t const *pattern = REGEX_CMD;
+    map_t *processed = map_create(5, MB_STR);
     string_t *cmd = 0;
+    string_t *tmp = NULL;
 
-    regex_extract(str_cstr(prompt), pattern, processed);
+    if (regex_extract(str_cstr(prompt), pattern, processed) != TRUE)
+        return (NULL);
     cmd = (string_t*)map_get(processed, 1);
     cmd = str_create(str_cstr(cmd));
-    if (args != 0)
-	(*args) = str_split(map_get(processed, 2), ' ');
+    if (args != 0) {
+        tmp = str_copy(map_get(processed, 2));
+        str_strip(&tmp);
+        str_pick(&tmp, '\t');
+	(*args) = str_split(tmp, ' ');
+    }
     map_free(&processed);
     return (cmd);
 }

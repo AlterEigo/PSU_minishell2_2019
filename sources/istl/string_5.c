@@ -33,3 +33,20 @@ void str_free(string_t **pstr)
     free(str);
     *pstr = 0;
 }
+
+void str_strip(string_t **str_p)
+{
+    uint_t left = 0;
+    uint_t right = 0;
+    string_t *str = (str_p == NULL) ? NULL : *str_p;
+    string_t *tmp = NULL;
+
+    if (str == NULL)
+        return;
+    left += str_cstr(str)[0] == ' ' ? 1 : 0;
+    right = str_len(str) - 1;
+    right -= str_cstr(str)[right] == ' ' ? 1 : 0;
+    tmp = str_substr(str, left, right);
+    str_free(&str);
+    *str_p = tmp;
+}

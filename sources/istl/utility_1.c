@@ -9,7 +9,7 @@
 #include "istl/hash_table.h"
 #include <stdlib.h>
 
-#include "regex_const.c"
+#include "./regex_const.c"
 
 const meta_bundle_t MB_UTYPE = {0, 0, sizeof(utype_t)};
 

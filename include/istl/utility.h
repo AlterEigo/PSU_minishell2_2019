@@ -35,6 +35,7 @@ extern const meta_bundle_t MB_UTYPE;
 extern const fnode_t FNODE_NULL;
 extern const fnode_t REGEX_UINT[];
 extern const fnode_t REGEX_OPT[];
+extern const fnode_t REGEX_CMD[];
 
 void utility_set_var(char const *, utype_t);
 void *utility_get_var(char const *);

@@ -140,7 +140,7 @@ all: directories $(LIBRARY) $(TARGET_NAME)
 
 debug:
 	@make re C_FLAGS_INPUT=-g\ -g3 --no-print-directory
-	@gdb ./$(TARGET_NAME) -ex "break main" -ex "run $(GDB_ARGV)"
+	@cgdb ./$(TARGET_NAME) -ex "break main" -ex "run $(GDB_ARGV)"
 
 valgrind:
 	@make re C_FLAGS_INPUT=-g\ -g3 --no-print-directory
