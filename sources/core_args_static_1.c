@@ -70,3 +70,21 @@ static string_t *interpret_cmd(string_t const *prompt, list_t **args)
     cmds = extract_all_cmds(prompt);
     return (cmd);
 }
+
+static uint_t execute_list_cmd(cmd_t *cmd)
+{
+    builtin_ft function = NULL;
+    uint_t res = 0;
+
+    if (cmd == NULL)
+        return (84);
+    function = get_builtin(cmd->name);
+    if (function != NULL)
+        res = function(cmd->args);
+    else
+        if (eval_extern(cmd->name, cmd->args) == 84) {
+            res = 84;
+            print_cerr(str_cstr(cmd->name), 0);
+        }
+    return (res);
+}

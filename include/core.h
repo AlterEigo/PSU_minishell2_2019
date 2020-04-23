@@ -43,6 +43,7 @@ uint_t builtin_setenv(list_t *args);
 uint_t builtin_unsetenv(list_t *args);
 uint_t eval_extern(string_t const *cmd, list_t *args);
 list_t *extract_all_cmds(string_t const *prompt);
+builtin_ft get_builtin(string_t const *command);
 
 uint_t eval_prompt(string_t const *prompt);
 void print_env();

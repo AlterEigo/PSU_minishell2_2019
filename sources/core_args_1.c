@@ -80,24 +80,15 @@ list_t *extract_all_cmds(string_t const *prompt)
 
 uint_t eval_prompt(string_t const *prompt)
 {
-    string_t *command = 0;
-    builtin_ft function = 0;
-    list_t *args = 0;
+    list_t *cmds = NULL;
     uint_t res = 0;
 
     if (prompt == 0)
         return (84);
-    command = interpret_cmd(prompt, &args);
-    return (84);
-    function = get_builtin(command);
-    if (function != 0)
-        res = function(args);
-    else
-        if (eval_extern(command, args) == 84) {
-            res = 84;
-            print_cerr(str_cstr(command), 0);
-        }
-    list_free(&args);
-    str_free(&command);
+    cmds = extract_all_cmds(prompt);
+    for (itr_t it = list_begin(cmds); !list_final(cmds, it); it = it_next(it)) {
+        res = execute_list_cmd(it_data(it));
+    }
+    list_free(&cmds);
     return (res);
 }
