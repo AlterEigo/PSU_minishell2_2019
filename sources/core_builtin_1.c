@@ -26,7 +26,7 @@ const fnode_t MS_KEY_VAL[3] = {
     FNODE_NULL
 };
 
-uint_t builtin_cd(list_t *args)
+int builtin_cd(list_t *args)
 {
     int res = 0;
     string_t *arg = 0;
@@ -37,7 +37,7 @@ uint_t builtin_cd(list_t *args)
         res = change_sdir(var);
         str_free(&var);
     } else if (list_len(args) == 1) {
-        arg = (string_t *)list_data(list_begin(args));
+        arg = it_data(list_begin(args));
         res = change_sdir(arg);
     } else {
         print_cerr("cd", "Too many arguments");
@@ -46,9 +46,9 @@ uint_t builtin_cd(list_t *args)
     return (res);
 }
 
-uint_t builtin_exit(list_t *args)
+int builtin_exit(list_t *args)
 {
-    uint_t res = 0;
+    int res = 0;
 
     if (args == 0 || list_len(args) == 0)
         res = 200;
@@ -59,9 +59,9 @@ uint_t builtin_exit(list_t *args)
     return (res);
 }
 
-uint_t builtin_env(list_t *args)
+int builtin_env(list_t *args)
 {
-    uint_t res = 0;
+    int res = 0;
 
     if (args == 0 || list_len(args) == 0) {
         print_env();
@@ -72,9 +72,9 @@ uint_t builtin_env(list_t *args)
     return (res);
 }
 
-uint_t builtin_setenv(list_t *args)
+int builtin_setenv(list_t *args)
 {
-    uint_t res = 0;
+    int res = 0;
     string_t *key = 0;
     string_t *value = 0;
 
@@ -88,23 +88,23 @@ uint_t builtin_setenv(list_t *args)
     if (regex_extract(str_cstr(key), MS_KEY_VAL, NULL) != TRUE) {
         print_cerr(
                 "setenv","Variable name must contain alphanumeric characters");
-        return (84);
+        return (1);
     }
     value = it_data(it_next(list_begin(args)));
     set_envvar(str_cstr(key), str_cstr(value));
     return (res);
 }
 
-uint_t builtin_unsetenv(list_t *args)
+int builtin_unsetenv(list_t *args)
 {
-    uint_t res = 0;
+    int res = 0;
     string_t *key = 0;
 
     if (args == 0 || list_len(args) == 0) {
-        res = 84;
+        res = 1;
         print_cerr("unsetenv", "Too few arguments");
     } else if (list_len(args) > 1) {
-        res = 84;
+        res = 1;
         print_cerr("unsetenv", "Too many arguments");
     } else {
         key = (string_t *)list_data(list_begin(args));

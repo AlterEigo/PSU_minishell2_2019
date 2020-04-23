@@ -71,20 +71,20 @@ static string_t *interpret_cmd(string_t const *prompt, list_t **args)
     return (cmd);
 }
 
-static uint_t execute_list_cmd(cmd_t *cmd)
+static int execute_list_cmd(cmd_t *cmd)
 {
     builtin_ft function = NULL;
-    uint_t res = 0;
+    int res = 0;
 
     if (cmd == NULL)
         return (84);
     function = get_builtin(cmd->name);
-    if (function != NULL)
+    if (function != NULL) {
         res = function(cmd->args);
-    else
-        if (eval_extern(cmd->name, cmd->args) == 84) {
-            res = 84;
-            print_cerr(str_cstr(cmd->name), 0);
-        }
+        return (res);
+    }
+    res = eval_extern(cmd->name, cmd->args);
+    if (res != 0)
+        print_cerr(str_cstr(cmd->name), 0);
     return (res);
 }

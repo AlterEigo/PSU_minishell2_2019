@@ -16,7 +16,7 @@
 #include "istl/utility.h"
 
 typedef enum { GETENV, SETENV, FREE } env_option_t;
-typedef uint_t (*builtin_ft)(list_t *args);
+typedef int (*builtin_ft)(list_t *args);
 
 char *strerror(int code);
 
@@ -36,16 +36,16 @@ void print_invite();
 void concat_path(string_t **rpath, string_t const *part);
 int change_dir(cchar_t ndir);
 int change_sdir(string_t const *ndir);
-uint_t builtin_cd(list_t *args);
-uint_t builtin_exit(list_t *args);
-uint_t builtin_env(list_t *args);
-uint_t builtin_setenv(list_t *args);
-uint_t builtin_unsetenv(list_t *args);
-uint_t eval_extern(string_t const *cmd, list_t *args);
+int builtin_cd(list_t *args);
+int builtin_exit(list_t *args);
+int builtin_env(list_t *args);
+int builtin_setenv(list_t *args);
+int builtin_unsetenv(list_t *args);
+int eval_extern(string_t const *cmd, list_t *args);
 list_t *extract_all_cmds(string_t const *prompt);
 builtin_ft get_builtin(string_t const *command);
 
-uint_t eval_prompt(string_t const *prompt);
+int eval_prompt(string_t const *prompt);
 void print_env();
 
 #endif

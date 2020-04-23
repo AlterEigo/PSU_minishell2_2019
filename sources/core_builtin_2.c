@@ -69,7 +69,8 @@ int exec_system(string_t const *cmd, char **cargs, char **envp)
     if (path != 0) {
         return (execve(str_cstr(path), cargs, envp));
     }
-    return (-1);
+    print_cerr(str_cstr(cmd), 0);
+    return (1);
 }
 
 char **to_cargs(string_t const *cmd, list_t *args)

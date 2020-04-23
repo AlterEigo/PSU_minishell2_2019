@@ -78,17 +78,16 @@ list_t *extract_all_cmds(string_t const *prompt)
     return (list);
 }
 
-uint_t eval_prompt(string_t const *prompt)
+int eval_prompt(string_t const *prompt)
 {
     list_t *cmds = NULL;
-    uint_t res = 0;
+    int res = 0;
 
     if (prompt == 0)
         return (84);
     cmds = extract_all_cmds(prompt);
-    for (itr_t it = list_begin(cmds); !list_final(cmds, it); it = it_next(it)) {
+    for (itr_t it = list_begin(cmds); !list_final(cmds, it); it = it_next(it))
         res = execute_list_cmd(it_data(it));
-    }
     list_free(&cmds);
     return (res);
 }
