@@ -8,7 +8,6 @@
 #include "istl/private/p_utility.h"
 
 const char RC_WILD[] = {'\0'};
-const fnode_t FNODE_NULL = {.cset = NULL, .ps = -1, .ns = -1, .fs = FALSE };
 const char CSET_ALPHA[] = {
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
     'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
@@ -70,7 +69,10 @@ const fnode_t REGEX_CMD_ARG[] = {
     {.cset = "\"", .ps = 0, .ns = 3, .fs = FALSE, .gwl = 2, .gwr = 3},
     {.cset = RC_WILD, .ps = 1, .ns = 1, .fs = TRUE, .gwl = 1, .gwr = 2},
     {.cset = " \t", .ps = 1, .ns = 4, .fs = TRUE, .gwl = 0, .gwr = 0},
-    {.cset = "\\|;:!?()&~\"", .ps = 1, .ns = -1, .fs = FALSE, .gwl = 0, .gwr = 0},
+    {
+        .cset = "\\|;:!?()&~\"",
+        .ps = 1, .ns = -1, .fs = FALSE, .gwl = 0, .gwr = 0
+    },
     {.cset = RC_WILD, .ps = 2, .ns = 2, .fs = FALSE, .gwl = 2, .gwr = 3},
     {.cset = "\'", .ps = 2, .ns = 4, .fs = TRUE, .gwl = 2, .gwr = 3},
     {.cset = RC_WILD, .ps = 3, .ns = 3, .fs = FALSE, .gwl = 2, .gwr = 3},

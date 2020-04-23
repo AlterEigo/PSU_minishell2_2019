@@ -18,6 +18,13 @@
 #include "istl/string.h"
 #include "istl/iterator.h"
 #include "istl/hash_table.h"
+#include "istl/utility.h"
+
+const fnode_t MS_KEY_VAL[3] = {
+    {.cset = RC_WILD, .ps = 0, .ns = -1, .fs = FALSE, .gwl = 0, .gwr = 0},
+    {.cset = CSET_ANUM, .ps = 0, .ns = 0, .fs = TRUE, .gwl = 1, .gwr = 2},
+    FNODE_NULL
+};
 
 uint_t builtin_cd(list_t *args)
 {
@@ -71,19 +78,20 @@ uint_t builtin_setenv(list_t *args)
     string_t *key = 0;
     string_t *value = 0;
 
-    if (args == 0 || list_len(args) == 0) {
+    if (args == 0 || list_len(args) == 0)
         print_env();
-    } else if (list_len(args) > 2) {
+    if (list_len(args) > 2) {
         res = 84;
         print_cerr("setenv", "Too many arguments");
-    } else {
-        key = (string_t *)list_data(list_begin(args));
-        value = (string_t *)list_data(it_next(list_begin(args)));
-        if (value == 0)
-            set_envvar(str_cstr(key), "");
-        else
-            set_envvar(str_cstr(key), str_cstr(value));
     }
+    key = it_data(list_begin(args));
+    if (regex_extract(str_cstr(key), MS_KEY_VAL, NULL) != TRUE) {
+        print_cerr(
+                "setenv","Variable name must contain alphanumeric characters");
+        return (84);
+    }
+    value = it_data(it_next(list_begin(args)));
+    set_envvar(str_cstr(key), str_cstr(value));
     return (res);
 }
 
@@ -93,7 +101,8 @@ uint_t builtin_unsetenv(list_t *args)
     string_t *key = 0;
 
     if (args == 0 || list_len(args) == 0) {
-        print_env();
+        res = 84;
+        print_cerr("unsetenv", "Too few arguments");
     } else if (list_len(args) > 1) {
         res = 84;
         print_cerr("unsetenv", "Too many arguments");

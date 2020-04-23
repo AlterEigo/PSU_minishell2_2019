@@ -30,9 +30,14 @@ typedef struct FaNode {
     int gwr;        //! Group window right
 } fnode_t;
 
+#ifndef FNODE_NULL
+#define FNODE_NULL ((fnode_t) {.cset = NULL, .ps = -1, .ns = -1, .fs = FALSE })
+#endif
+
+extern const char RC_WILD[];
 extern const char CSET_ALPHA[];
+extern const char CSET_ANUM[];
 extern const meta_bundle_t MB_UTYPE;
-extern const fnode_t FNODE_NULL;
 extern const fnode_t REGEX_UINT[];
 extern const fnode_t REGEX_OPT[];
 extern const fnode_t REGEX_CMD[];

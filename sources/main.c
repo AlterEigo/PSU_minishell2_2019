@@ -24,6 +24,8 @@ void print_invite(void)
 {
     string_t *cwd = get_envvar("PWD");
 
+    if (!isatty(0))
+        return;
     str_print(cwd);
     str_free(&cwd);
     print_cchar(" > ");
@@ -37,7 +39,8 @@ void prompt_loop(void)
         print_invite();
         prompt = prompt_line(prompt);
         if (prompt == 0) {
-            print_cchar("exit\n");
+            if (isatty(0))
+                print_cchar("exit\n");
             break;
         }
         if (eval_prompt(prompt) == 200)

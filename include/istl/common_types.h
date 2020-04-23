@@ -22,7 +22,7 @@ typedef unsigned int (uint_t);                  //!< Unsigned int typedef
 typedef unsigned long long (hash_value_t);      //!< Hash number typedef
 typedef long unsigned int (dsize_t);    //!< Data size typedef
 typedef unsigned char (byte_t);         //!< Byte typedef
-typedef char const* (cchar_t);          //!< Constant C string typedef
+typedef char const * (cchar_t);          //!< Constant C string typedef
 
 /*!
  \brief Copy constructor prototype
@@ -30,8 +30,8 @@ typedef char const* (cchar_t);          //!< Constant C string typedef
  container should implement a copy constructor to prevent any
  problems related to an object's shallow copy.
 */
-typedef void *(*cpy_constructor_ft)(void const* poriginal);
-typedef void *(*ctor_ft)(void const* poriginal);
+typedef void *(*cpy_constructor_ft)(void const *poriginal);
+typedef void *(*ctor_ft)(void const *poriginal);
 
 /*!
  \brief Destructor prototype
@@ -45,7 +45,7 @@ typedef void (*dtor_ft)(void *pdata);
 
 typedef enum SPTR_TYPE {SP_UNIQUE, SP_SHARED, SP_WEAK} sptrt_t;
 
-typedef void* (wptr_t);
+typedef void *(wptr_t);
 /*!
  \brief Extended allocated memory block
  \details This structure is for internal use only:
@@ -68,15 +68,15 @@ typedef struct Vector2 {
 extern const vec2_t V_NULL;
 
 /*!
-    \brief Container with all custom type infos
-    \details A meta bundle is passed to any provided container
-    so they could be stored properly in this container. This
-    structure is the actual bridge between your type and a data
-    structure. Any type that you intent to store in such container
-    should also implement a constant meta bundle, providing its
-    copy constructor and a destructor, with the size of your
-    structure. In C you can't guess generic structure's type,
-    so you have to create a description structure manually.
+ \brief Container with all custom type infos
+ \details A meta bundle is passed to any provided container
+ so they could be stored properly in this container. This
+ structure is the actual bridge between your type and a data
+ structure. Any type that you intent to store in such container
+ should also implement a constant meta bundle, providing its
+ copy constructor and a destructor, with the size of your
+ structure. In C you can't guess generic structure's type,
+ so you have to create a description structure manually.
 */
 struct MetaBundle {
     cpy_constructor_ft copy; //!< Pointer to the type's copy constructor
