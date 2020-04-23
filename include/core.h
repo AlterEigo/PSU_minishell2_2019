@@ -18,8 +18,6 @@
 typedef enum { GETENV, SETENV, FREE } env_option_t;
 typedef uint_t (*builtin_ft)(list_t *args);
 
-extern const fnode_t MS_CMD[];
-
 char *strerror(int code);
 
 char **env_to_char();
@@ -44,6 +42,7 @@ uint_t builtin_env(list_t *args);
 uint_t builtin_setenv(list_t *args);
 uint_t builtin_unsetenv(list_t *args);
 uint_t eval_extern(string_t const *cmd, list_t *args);
+list_t *extract_all_cmds(string_t const *prompt);
 
 uint_t eval_prompt(string_t const *prompt);
 void print_env();

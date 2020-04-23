@@ -20,7 +20,7 @@
 #include "core.h"
 #include "env_map.h"
 
-void print_invite()
+void print_invite(void)
 {
     string_t *cwd = get_envvar("PWD");
 
@@ -29,12 +29,12 @@ void print_invite()
     print_cchar(" > ");
 }
 
-void prompt_loop()
+void prompt_loop(void)
 {
     string_t *prompt = 0;
 
     while (1) {
-	print_invite();
+        print_invite();
         prompt = prompt_line(prompt);
         if (prompt == 0) {
             print_cchar("exit\n");
@@ -60,11 +60,11 @@ int main(int argc, char **argv, char **env)
     signal(SIGINT, handle_sigint);
     env_manager(SETENV, env);
     if (argv[1] != 0) {
-	arg = str_create(argv[1]);
-	eval_prompt(arg);
-	str_free(&arg);
+        arg = str_create(argv[1]);
+        eval_prompt(arg);
+        str_free(&arg);
     } else
-	prompt_loop();
+        prompt_loop();
     env_manager(FREE, 0);
     return (0);
 }

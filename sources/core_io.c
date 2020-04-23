@@ -16,11 +16,7 @@
 #include "istl/hash_table.h"
 #include "core.h"
 
-const fnode_t MS_CMD[] = {
-    // FNODE_NULL
-};
-
-string_t *prompt_line()
+string_t *prompt_line(void)
 {
     size_t b_size = 256;
     char *buffer = 0;
@@ -36,7 +32,7 @@ string_t *prompt_line()
     prompt = str_wcreate(buffer);
     str_pick(&prompt, '\n');
     if (str_len(prompt) == 0)
-	str_free(&prompt);
+        str_free(&prompt);
     return (prompt);
 }
 

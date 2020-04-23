@@ -83,11 +83,15 @@ vpath %.c $(SOURCE_DIR)/$(ISTL_DIR)
 
 
 MAIN_SOURCE	=			main.c
-SOURCES_LIST	=			core_env.c \
+SOURCES_LIST	=			core_env_1.c \
+					core_env_2.c \
+					core_env_3.c \
 					core_io.c \
 					core_os.c \
-					core_builtin.c \
-					core_args.c \
+					core_builtin_1.c \
+					core_builtin_2.c \
+					core_builtin_3.c \
+					core_args_1.c \
 					$(MAIN_SOURCE) \
 					$(ISTL_MODULE)
 LIBRARY			=

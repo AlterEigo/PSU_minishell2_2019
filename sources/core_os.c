@@ -46,11 +46,11 @@ static string_t *fix_path_prefix(string_t const *dir, bool_t append)
     string_t *tmp = 0;
 
     if (dir == 0)
-	return (0);
+        return (0);
     if (append && str_cstr(dir)[0] != '/')
-	tmp = str_cconcat("/", str_cstr(dir));
+        tmp = str_cconcat("/", str_cstr(dir));
     if (!append && str_cstr(dir)[0] == '/')
-	tmp = str_substr(dir, 1, str_len(dir));
+        tmp = str_substr(dir, 1, str_len(dir));
     tmp = (tmp == 0) ? str_create(str_cstr(dir)) : tmp;
     return (tmp);
 }
@@ -62,14 +62,14 @@ static int set_current_path(string_t const *path)
     string_t *tmp = 0;
 
     if (path == 0)
-	return (-1);
+        return (-1);
     current = get_envvar("PWD");
     res = chdir(str_cstr(path));
     if (res != -1) {
-	tmp = fix_path_prefix(path, TRUE);
-	set_envvar("PWD", str_cstr(tmp));
-	set_envvar("OLDPWD", str_cstr(current));
-	str_free(&tmp);
+        tmp = fix_path_prefix(path, TRUE);
+        set_envvar("PWD", str_cstr(tmp));
+        set_envvar("OLDPWD", str_cstr(current));
+        str_free(&tmp);
     }
     str_free(&current);
     return (res);
