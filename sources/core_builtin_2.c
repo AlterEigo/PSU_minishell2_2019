@@ -39,38 +39,24 @@ bool_t is_a_path(string_t const *cmd)
         return (FALSE);
 }
 
-string_t *find_in_path(string_t const *file)
+string_t *find_in_path(string_t const *file, struct stat *fs)
 {
-    string_t *path = (file == 0) ? 0 : get_envvar("PATH");
-    list_t *dirs = (file == 0) ? 0 : str_split(path, ':');
+    string_t *path = (file == 0 || fs == 0) ? 0 : get_envvar("PATH");
+    list_t *dirs = (file == 0 || fs == 0) ? 0 : str_split(path, ':');
     iterator_t it;
     string_t *cur = 0;
 
-    if (file == 0)
+    if (file == NULL || fs == NULL)
         return (0);
     it = (dirs == 0) ? it : list_begin(dirs);
     for (; !list_final(dirs, it); it = it_next(it)) {
         cur = str_copy(list_data(it));
         concat_path(&cur, file);
-        if (access(str_cstr(cur), F_OK) == 0)
+        if (stat(str_cstr(cur), fs) != -1)
             return (cur);
         str_free(&cur);
     }
     return (0);
-}
-
-int exec_system(string_t const *cmd, char **cargs, char **envp)
-{
-    string_t *path = 0;
-
-    if (cmd == 0 || cargs == 0)
-        return (-1);
-    path = find_in_path(cmd);
-    if (path != 0) {
-        return (execve(str_cstr(path), cargs, envp));
-    }
-    print_cerr(str_cstr(cmd), 0);
-    return (1);
 }
 
 char **to_cargs(string_t const *cmd, list_t *args)

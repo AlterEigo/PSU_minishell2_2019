@@ -52,10 +52,8 @@ int builtin_exit(list_t *args)
 
     if (args == 0 || list_len(args) == 0)
         res = 200;
-    else {
-        res = 84;
-        print_cerr("exit", "Too many arguments");
-    }
+    else
+        res = 12;
     return (res);
 }
 

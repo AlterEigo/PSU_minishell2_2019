@@ -7,3 +7,4 @@
 !Makefile
 !Makefile.istl_sources
 !.gitignore
+template.c

@@ -84,7 +84,5 @@ static int execute_list_cmd(cmd_t *cmd)
         return (res);
     }
     res = eval_extern(cmd->name, cmd->args);
-    if (res != 0)
-        print_cerr(str_cstr(cmd->name), 0);
     return (res);
 }
