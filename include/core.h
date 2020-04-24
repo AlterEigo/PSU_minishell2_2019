@@ -9,6 +9,7 @@
 
 #include "istl/common_types.h"
 #include "env_map.h"
+#include "command_model.h"
 #include "istl/list.h"
 #include "istl/string.h"
 #include "istl/iterator.h"
@@ -41,7 +42,7 @@ int builtin_exit(list_t *args);
 int builtin_env(list_t *args);
 int builtin_setenv(list_t *args);
 int builtin_unsetenv(list_t *args);
-int eval_extern(string_t const *cmd, list_t *args);
+int eval_extern(cmd_t const *cmd, list_t *args);
 list_t *extract_all_cmds(string_t const *prompt);
 builtin_ft get_builtin(string_t const *command);
 

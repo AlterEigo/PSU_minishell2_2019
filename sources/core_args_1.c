@@ -82,12 +82,17 @@ int eval_prompt(string_t const *prompt)
 {
     list_t *cmds = NULL;
     int res = 0;
+    cmd_t *cmd = NULL;
 
     if (prompt == 0)
         return (84);
     cmds = extract_all_cmds(prompt);
-    for (itr_t it = list_begin(cmds); !list_final(cmds, it); it = it_next(it))
-        res = execute_list_cmd(it_data(it));
-    list_free(&cmds);
-    return (res);
+    while (list_len(cmds) > 0) {
+        cmd = list_pull(cmds, list_begin(cmds));
+        if (cmd == NULL)
+            continue;
+        res = execute_list_cmd(cmd);
+        free(cmd);
+    }
+    return (list_free(&cmds), res);
 }

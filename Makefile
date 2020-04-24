@@ -86,6 +86,7 @@ MAIN_SOURCE	=			main.c
 SOURCES_LIST	=			core_env_1.c \
 					core_env_2.c \
 					core_env_3.c \
+					command_1.c \
 					core_io.c \
 					core_os.c \
 					core_builtin_1.c \

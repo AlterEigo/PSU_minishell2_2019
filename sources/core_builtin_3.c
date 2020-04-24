@@ -14,6 +14,7 @@
 
 #include "core.h"
 #include "p_core_builtin.h"
+#include "command_model.h"
 #include "istl/common_types.h"
 #include "istl/list.h"
 #include "istl/string.h"
@@ -33,21 +34,21 @@ void check_stat(string_t const *cmd, int stret, struct stat fs)
     print_cerr(str_cstr(cmd), "Permission denied");
 }
 
-int exec_try(string_t const *cmd, list_t *args)
+int exec_try(cmd_t const *cmd, list_t *args)
 {
-    char **cargs = (cmd == 0) ? 0 : to_cargs(cmd, args);
+    char **cargs = (cmd == 0) ? 0 : to_cargs(cmd->name, args);
     char **envp = (cmd == 0) ? 0 : env_to_char();
     int res = 0;
-    string_t const *path = cmd;
+    string_t const *path = cmd->name;
     struct stat fs;
 
     if (cmd == 0)
         return (1);
-    if (!is_a_path(cmd))
-        path = find_in_path(cmd);
+    if (!is_a_path(cmd->name))
+        path = find_in_path(cmd->name);
     res = stat(str_cstr(path), &fs);
     execve(str_cstr(path), cargs, envp);
-    check_stat(cmd, res, fs);
+    check_stat(cmd->name, res, fs);
     return (1);
 }
 
@@ -72,7 +73,7 @@ int process_returned(int status)
     return (res);
 }
 
-int eval_extern(string_t const *cmd, list_t *args)
+int eval_extern(cmd_t const *cmd, list_t *args)
 {
     pid_t ret_pid = fork();
     int status;

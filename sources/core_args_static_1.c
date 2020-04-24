@@ -83,6 +83,6 @@ static int execute_list_cmd(cmd_t *cmd)
         res = function(cmd->args);
         return (res);
     }
-    res = eval_extern(cmd->name, cmd->args);
+    res = eval_extern(cmd, cmd->args);
     return (res);
 }
