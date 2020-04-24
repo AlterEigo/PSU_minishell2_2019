@@ -42,7 +42,7 @@ int builtin_exit(list_t *args);
 int builtin_env(list_t *args);
 int builtin_setenv(list_t *args);
 int builtin_unsetenv(list_t *args);
-int eval_extern(cmd_t const *cmd, list_t *args);
+int eval_extern(cmd_t const *cmd, list_t *args, cmd_t *);
 list_t *extract_all_cmds(string_t const *prompt);
 builtin_ft get_builtin(string_t const *command);
 

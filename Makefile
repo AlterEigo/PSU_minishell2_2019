@@ -108,6 +108,7 @@ C_FLAGS			=	-W -Wall -Wextra -Werror \
 					-I$(HEADER_DIR) \
 					-Wno-switch \
 					-Wno-unused-variable \
+					-Wno-unused-value \
 					-Wno-unused-parameter \
 					-Wno-unused-but-set-variable \
 					-Wno-unused-but-set-parameter \

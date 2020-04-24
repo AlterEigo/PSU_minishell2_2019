@@ -83,6 +83,7 @@ int eval_prompt(string_t const *prompt)
     list_t *cmds = NULL;
     int res = 0;
     cmd_t *cmd = NULL;
+    cmd_t *texas_oil = NULL;
 
     if (prompt == 0)
         return (84);
@@ -91,8 +92,10 @@ int eval_prompt(string_t const *prompt)
         cmd = list_pull(cmds, list_begin(cmds));
         if (cmd == NULL)
             continue;
-        res = execute_list_cmd(cmd);
-        free(cmd);
+        res = execute_list_cmd(cmd, texas_oil);
+        if (texas_oil != NULL)
+            free(texas_oil);
+        texas_oil = cmd_is_piped(cmd) ? cmd : NULL;
     }
     return (list_free(&cmds), res);
 }

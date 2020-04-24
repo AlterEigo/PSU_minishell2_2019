@@ -54,6 +54,8 @@ int builtin_exit(list_t *args)
         res = 200;
     else
         res = 12;
+    if (isatty(0))
+        write(1, "exit\n", 6);
     return (res);
 }
 

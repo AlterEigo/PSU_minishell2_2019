@@ -34,7 +34,7 @@ void check_stat(string_t const *cmd, int stret, struct stat fs)
     print_cerr(str_cstr(cmd), "Permission denied");
 }
 
-int exec_try(cmd_t const *cmd, list_t *args)
+int exec_try(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
 {
     char **cargs = (cmd == 0) ? 0 : to_cargs(cmd->name, args);
     char **envp = (cmd == 0) ? 0 : env_to_char();
@@ -47,6 +47,18 @@ int exec_try(cmd_t const *cmd, list_t *args)
     if (!is_a_path(cmd->name))
         path = find_in_path(cmd->name);
     res = stat(str_cstr(path), &fs);
+    if (texas_oil != NULL) {
+        dup2(texas_oil->std_out.out, 0);
+        dup2(texas_oil->err_out.out, 0);
+        pipe_close(&texas_oil->std_out);
+        pipe_close(&texas_oil->err_out);
+    }
+    if (cmd_is_piped(cmd)) {
+        dup2(cmd->std_out.in, 1);
+        dup2(cmd->err_out.in, 2);
+        close(cmd->std_out.in);
+        close(cmd->err_out.in);
+    }
     execve(str_cstr(path), cargs, envp);
     check_stat(cmd->name, res, fs);
     return (1);
@@ -73,7 +85,7 @@ int process_returned(int status)
     return (res);
 }
 
-int eval_extern(cmd_t const *cmd, list_t *args)
+int eval_extern(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
 {
     pid_t ret_pid = fork();
     int status;
@@ -81,7 +93,7 @@ int eval_extern(cmd_t const *cmd, list_t *args)
     if (ret_pid == -1) {
         return (84);
     } else if (ret_pid == 0) {
-        status = exec_try(cmd, args);
+        status = exec_try(cmd, args, texas_oil);
         if (status != 0)
             _exit(status);
     } else {
