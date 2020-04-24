@@ -39,20 +39,20 @@ bool_t is_a_path(string_t const *cmd)
         return (FALSE);
 }
 
-string_t *find_in_path(string_t const *file, struct stat *fs)
+string_t *find_in_path(string_t const *file)
 {
-    string_t *path = (file == 0 || fs == 0) ? 0 : get_envvar("PATH");
-    list_t *dirs = (file == 0 || fs == 0) ? 0 : str_split(path, ':');
+    string_t *path = (file == 0) ? 0 : get_envvar("PATH");
+    list_t *dirs = (file == 0) ? 0 : str_split(path, ':');
     iterator_t it;
     string_t *cur = 0;
 
-    if (file == NULL || fs == NULL)
+    if (file == NULL)
         return (0);
     it = (dirs == 0) ? it : list_begin(dirs);
     for (; !list_final(dirs, it); it = it_next(it)) {
         cur = str_copy(list_data(it));
         concat_path(&cur, file);
-        if (stat(str_cstr(cur), fs) != -1)
+        if (access(str_cstr(cur), R_OK | X_OK) != -1)
             return (cur);
         str_free(&cur);
     }

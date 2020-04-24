@@ -20,9 +20,9 @@
 #include "istl/iterator.h"
 #include "istl/hash_table.h"
 
-void check_path(string_t const *cmd, string_t const *path, struct stat fs)
+void check_stat(string_t const *cmd, int stret, struct stat fs)
 {
-    if (path == NULL) {
+    if (stret == -1) {
         print_cerr(str_cstr(cmd), "Command not found");
         return;
     }
@@ -38,18 +38,16 @@ int exec_try(string_t const *cmd, list_t *args)
     char **cargs = (cmd == 0) ? 0 : to_cargs(cmd, args);
     char **envp = (cmd == 0) ? 0 : env_to_char();
     int res = 0;
-    string_t *path = NULL;
+    string_t const *path = cmd;
     struct stat fs;
 
     if (cmd == 0)
         return (1);
-    if (is_a_path(cmd))
-        res = execve(str_cstr(cmd), cargs, envp);
-    else {
-        path = find_in_path(cmd, &fs);
-        execve(str_cstr(path), cargs, envp);
-        check_path(cmd, path, fs);
-    }
+    if (!is_a_path(cmd))
+        path = find_in_path(cmd);
+    res = stat(str_cstr(path), &fs);
+    execve(str_cstr(path), cargs, envp);
+    check_stat(cmd, res, fs);
     return (1);
 }
 

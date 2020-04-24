@@ -12,7 +12,7 @@
 
 bool_t is_abs_path(string_t const *cmd);
 bool_t is_a_path(string_t const *cmd);
-string_t *find_in_path(string_t const *file, struct stat *fs);
+string_t *find_in_path(string_t const *file);
 char **to_cargs(string_t const *cmd, list_t *args);
 int exec_try(string_t const *cmd, list_t *args);
 
