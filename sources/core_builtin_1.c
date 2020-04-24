@@ -85,7 +85,7 @@ int builtin_setenv(list_t *args)
     key = it_data(list_begin(args));
     if (regex_extract(str_cstr(key), MS_KEY_VAL, NULL) != TRUE) {
         print_cerr(
-                "setenv","Variable name must contain alphanumeric characters");
+                "setenv", "Variable name must contain alphanumeric characters");
         return (1);
     }
     value = it_data(it_next(list_begin(args)));
