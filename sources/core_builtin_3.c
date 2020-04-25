@@ -36,14 +36,16 @@ void check_stat(string_t const *cmd, int stret, struct stat fs)
 
 int exec_try(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
 {
-    char **cargs = (cmd == 0) ? 0 : to_cargs(cmd->name, args);
-    char **envp = (cmd == 0) ? 0 : env_to_char();
     int res = 0;
     string_t const *path = cmd->name;
     struct stat fs;
 
     if (cmd == 0)
         return (1);
+    if (texas_oil != NULL) {
+        dup2(texas_oil->output.out, 0);
+        close(texas_oil->output.out);
+    }
     if (cmd_is_piped(cmd)) {
         close(cmd->output.out);
         dup2(cmd->output.in, 1);
@@ -51,7 +53,7 @@ int exec_try(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
     if (!is_a_path(cmd->name))
         path = find_in_path(cmd->name);
     res = stat(str_cstr(path), &fs);
-    execve(str_cstr(path), cargs, envp);
+    execve(str_cstr(path), to_cargs(cmd->name, args), env_to_char());
     check_stat(cmd->name, res, fs);
     return (1);
 }
@@ -80,29 +82,23 @@ int process_returned(int status)
 int eval_extern(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
 {
     pid_t ret_pid = fork();
-    int status;
+    int ret;
 
-    if (ret_pid == -1) {
+    if (ret_pid == -1)
         return (84);
-    } else if (ret_pid == 0) {
-        if (texas_oil != NULL) {
-            dup2(texas_oil->output.out, 0);
-            close(texas_oil->output.out);
-        }
+    if (ret_pid == 0) {
         if (cmd_is_piped(cmd)) {
             dup2(cmd->output.in, 1);
             close(cmd->output.in);
         }
-        status = exec_try(cmd, args, texas_oil);
-        if (status != 0)
-            _exit(status);
+        ret = exec_try(cmd, args, texas_oil);
+        if (ret != 0)
+            _exit(ret);
     } else {
         if (cmd_is_piped(cmd))
             close(cmd->output.in);
-        waitpid(ret_pid, &status, WCONTINUED | WUNTRACED);
-        if (WIFEXITED(status))
-            return (WEXITSTATUS(status));
-        return (process_returned(status));
+        waitpid(ret_pid, &ret, WCONTINUED | WUNTRACED);
+        return (WIFEXITED(ret) ? WEXITSTATUS(ret) : process_returned(ret));
     }
     return (84);
 }
