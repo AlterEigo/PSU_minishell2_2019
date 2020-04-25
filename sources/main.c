@@ -20,6 +20,8 @@
 #include "core.h"
 #include "env_map.h"
 
+extern char **environ;
+
 void print_invite(void)
 {
     string_t *cwd = get_envvar("PWD");
@@ -57,13 +59,13 @@ void handle_sigint(int sig)
     print_invite();
 }
 
-int main(int argc, char **argv, char **env)
+int main(int argc, char **argv)
 {
     string_t *arg = 0;
     int res = 0;
 
     signal(SIGINT, handle_sigint);
-    env_manager(SETENV, env);
+    env_manager(SETENV, environ);
     if (argv[1] != 0) {
         arg = str_create(argv[1]);
         res = eval_prompt(arg);

@@ -20,9 +20,10 @@
 #include "istl/hash_table.h"
 #include "istl/utility.h"
 
-const fnode_t MS_KEY_VAL[3] = {
+const fnode_t MS_KEY_VAL[] = {
     {.cset = RC_WILD, .ps = 0, .ns = -1, .fs = FALSE, .gwl = 0, .gwr = 0},
     {.cset = CSET_ANUM, .ps = 0, .ns = 0, .fs = TRUE, .gwl = 1, .gwr = 2},
+    {.cset = "_", .ps = 0, .ns = 0, .fs = TRUE, .gwl = 1, .gwr = 2},
     FNODE_NULL
 };
 
@@ -78,16 +79,17 @@ int builtin_setenv(list_t *args)
     string_t *key = 0;
     string_t *value = 0;
 
-    if (args == 0 || list_len(args) == 0)
+    if (args == 0 || list_len(args) == 0) {
         print_env();
-    if (list_len(args) > 2) {
-        res = 84;
+        return (0);
+    } else if (list_len(args) > 2) {
         print_cerr("setenv", "Too many arguments");
+        return (84);
     }
     key = it_data(list_begin(args));
     if (regex_extract(str_cstr(key), MS_KEY_VAL, NULL) != TRUE) {
-        print_cerr(
-                "setenv", "Variable name must contain alphanumeric characters");
+        print_cerr("setenv",
+                "Variable name must contain alphanumeric characters");
         return (1);
     }
     value = it_data(it_next(list_begin(args)));
