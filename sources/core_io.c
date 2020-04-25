@@ -18,13 +18,10 @@
 
 string_t *prompt_line(void)
 {
-    size_t b_size = 256;
-    char *buffer = 0;
+    size_t b_size = 0;
+    char *buffer = NULL;
     string_t *prompt = 0;
 
-    buffer = malloc(sizeof(char) * b_size);
-    if (buffer == 0)
-        return (0);
     if (getline(&buffer, &b_size, stdin) == -1) {
         free(buffer);
         return (0);

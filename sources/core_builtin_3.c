@@ -55,7 +55,7 @@ int exec_try(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
     res = stat(str_cstr(path), &fs);
     execve(str_cstr(path), to_cargs(cmd->name, args), env_to_char());
     check_stat(cmd->name, res, fs);
-    return (1);
+    return (errno);
 }
 
 int process_returned(int status)
@@ -85,7 +85,7 @@ int eval_extern(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
     int ret;
 
     if (ret_pid == -1)
-        return (84);
+        return (errno);
     if (ret_pid == 0) {
         if (cmd_is_piped(cmd)) {
             dup2(cmd->output.in, 1);
