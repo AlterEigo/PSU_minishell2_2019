@@ -50,15 +50,21 @@ const fnode_t REGEX_CMD[] = {
     {.cset = " \t", .ps = 0, .ns = 0, .fs = FALSE, .gwl = 0, .gwr = 0},
     {.cset = RC_WILD, .ps = 1, .ns = 1, .fs = TRUE, .gwl = 1, .gwr = 2},
     {.cset = " \t", .ps = 1, .ns = 2, .fs = TRUE, .gwl = 2, .gwr = 2},
-    {.cset = RC_WILD, .ps = 2, .ns = 2, .fs = TRUE, .gwl = 2, .gwr = 3},
     {.cset = "|", .ps = 1, .ns = 3, .fs = FALSE, .gwl = 3, .gwr = 4},
     {.cset = "&;", .ps = 1, .ns = 3, .fs = TRUE, .gwl = 3, .gwr = 4},
+    {.cset = RC_WILD, .ps = 2, .ns = 2, .fs = TRUE, .gwl = 2, .gwr = 3},
+    {.cset = "\"", .ps = 2, .ns = 5, .fs = FALSE, .gwl = 2, .gwr = 3},
+    {.cset = "\'", .ps = 2, .ns = 6, .fs = FALSE, .gwl = 2, .gwr = 3},
     {.cset = "|", .ps = 2, .ns = 3, .fs = FALSE, .gwl = 3, .gwr = 4},
     {.cset = "&;", .ps = 2, .ns = 3, .fs = TRUE, .gwl = 3, .gwr = 4},
     {.cset = RC_WILD, .ps = 3, .ns = 4, .fs = TRUE, .gwl = 4, .gwr = 5},
     {.cset = " \t", .ps = 3, .ns = 3, .fs = TRUE, .gwl = 0, .gwr = 0},
     {.cset = "&", .ps = 3, .ns = 4, .fs = FALSE, .gwl = 3, .gwr = 4},
     {.cset = RC_WILD, .ps = 4, .ns = 4, .fs = TRUE, .gwl = 4, .gwr = 5},
+    {.cset = RC_WILD, .ps = 5, .ns = 5, .fs = FALSE, .gwl = 2, .gwr = 3},
+    {.cset = "\"", .ps = 5, .ns = 2, .fs = TRUE, .gwl = 2, .gwr = 3},
+    {.cset = RC_WILD, .ps = 6, .ns = 6, .fs = FALSE, .gwl = 2, .gwr = 3},
+    {.cset = "\'", .ps = 6, .ns = 2, .fs = TRUE, .gwl = 2, .gwr = 3},
     FNODE_NULL
 };
 const fnode_t REGEX_CMD_ARG[] = {

@@ -86,11 +86,11 @@ int eval_extern(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
         return (84);
     } else if (ret_pid == 0) {
         if (texas_oil != NULL) {
-            dup2(texas_oil->output.out, STDIN_FILENO);
+            dup2(texas_oil->output.out, 0);
             close(texas_oil->output.out);
         }
         if (cmd_is_piped(cmd)) {
-            dup2(cmd->output.in, STDOUT_FILENO);
+            dup2(cmd->output.in, 1);
             close(cmd->output.in);
         }
         status = exec_try(cmd, args, texas_oil);
