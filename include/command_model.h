@@ -14,8 +14,8 @@ typedef struct PipeModel {
     bool_t opened;
     union {
         struct {
-            int in;
             int out;
+            int in;
         };
         int vals[2];
     };
@@ -25,8 +25,7 @@ typedef struct CommandModel {
     string_t *name;
     list_t *args;
     string_t *op;
-    pipe_t std_out;
-    pipe_t err_out;
+    pipe_t output;
 } (cmd_t);
 
 bool_t pipe_open(pipe_t *);

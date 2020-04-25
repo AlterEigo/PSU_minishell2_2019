@@ -44,21 +44,13 @@ int exec_try(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
 
     if (cmd == 0)
         return (1);
+    if (cmd_is_piped(cmd)) {
+        close(cmd->output.out);
+        dup2(cmd->output.in, 1);
+    }
     if (!is_a_path(cmd->name))
         path = find_in_path(cmd->name);
     res = stat(str_cstr(path), &fs);
-    if (texas_oil != NULL) {
-        dup2(texas_oil->std_out.out, 0);
-        dup2(texas_oil->err_out.out, 0);
-        pipe_close(&texas_oil->std_out);
-        pipe_close(&texas_oil->err_out);
-    }
-    if (cmd_is_piped(cmd)) {
-        dup2(cmd->std_out.in, 1);
-        dup2(cmd->err_out.in, 2);
-        close(cmd->std_out.in);
-        close(cmd->err_out.in);
-    }
     execve(str_cstr(path), cargs, envp);
     check_stat(cmd->name, res, fs);
     return (1);
@@ -93,10 +85,20 @@ int eval_extern(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
     if (ret_pid == -1) {
         return (84);
     } else if (ret_pid == 0) {
+        if (texas_oil != NULL) {
+            dup2(texas_oil->output.out, STDIN_FILENO);
+            close(texas_oil->output.out);
+        }
+        if (cmd_is_piped(cmd)) {
+            dup2(cmd->output.in, STDOUT_FILENO);
+            close(cmd->output.in);
+        }
         status = exec_try(cmd, args, texas_oil);
         if (status != 0)
             _exit(status);
     } else {
+        if (cmd_is_piped(cmd))
+            close(cmd->output.in);
         waitpid(ret_pid, &status, WCONTINUED | WUNTRACED);
         if (WIFEXITED(status))
             return (WEXITSTATUS(status));

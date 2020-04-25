@@ -23,11 +23,7 @@ bool_t cmd_drain(cmd_t *cmd)
 
     if (cmd == NULL)
         return (FALSE);
-    res = pipe_open(&cmd->std_out);
-    if (res == TRUE)
-        res = pipe_open(&cmd->err_out);
-    if (pipe_opened(&cmd->std_out) && res == FALSE)
-        pipe_close(&cmd->std_out);
+    res = pipe_open(&cmd->output);
     return (res);
 }
 
