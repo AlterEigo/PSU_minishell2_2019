@@ -42,6 +42,8 @@ int builtin_cd(list_t *args)
         str_free(&var);
     } else if (list_len(args) == 1) {
         arg = it_data(list_begin(args));
+        if (str_cmp(arg, str_wcreate("-")) == TRUE)
+            arg = get_envvar("OLDPWD");
         res = change_sdir(arg);
     } else {
         print_cerr("cd", "Too many arguments");
