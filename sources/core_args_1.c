@@ -35,26 +35,21 @@ builtin_ft get_builtin(string_t const *command)
 
 list_t *extract_all_args(string_t const *argline)
 {
-    list_t *args = NULL;
-    string_t *str = NULL;
+    list_t *list = list_create(MB_STR);
     map_t *match = map_create(5, MB_STR);
-    uint_t asize = list_len(args);
+    string_t *str = NULL;
 
     if (argline == NULL)
-        return (map_free(&match), NULL);
-    for (uint_t i = 0; i < asize; i++) {
-        str_free(&str);
-        str = list_pull(args, list_begin(args));
-        if (str == NULL || str_len(str) < 1)
-            continue;
-        if (regex_extract(str_cstr(str), REGEX_CMD_ARG, match) == FALSE)
-            continue;
+        return (list_free(&list), map_free(&match), NULL);
+    while (regex_extract(str_cstr(argline), REGEX_CMD_ARG, match) != FALSE) {
         str = map_get(match, 1);
-        str = (str == NULL) ? map_get(match, 2) : str;
-        list_push_back(args, str);
-        str = NULL;
+        if (str == NULL)
+            str = map_get(match, 2);
+        list_push_back(list, str);
+        argline = map_get(match, 3);
     }
-    return (map_free(&match), args);
+    map_free(&match);
+    return (list);
 }
 
 list_t *extract_all_cmds(string_t const *prompt)
