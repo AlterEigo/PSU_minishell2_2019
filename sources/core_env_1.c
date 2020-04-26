@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <limits.h>
 
 #include "istl/list.h"
 #include "istl/string.h"
@@ -59,7 +60,10 @@ char **env_to_char(void)
 
 string_t *get_cwd(void)
 {
-    return (get_envvar("PWD"));
+    char *buf = malloc(sizeof(char) * PATH_MAX);
+
+    getcwd(buf, PATH_MAX);
+    return (str_wcreate(buf));
 }
 
 env_map_t env_to_map(char **envp)

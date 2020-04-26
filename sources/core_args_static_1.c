@@ -82,6 +82,10 @@ static int execute_list_cmd(cmd_t *cmd, cmd_t *texas_oil)
         cmd_drain(cmd);
     function = get_builtin(cmd->name);
     if (function != NULL) {
+        if (cmd_is_piped(cmd)) {
+            dup2(cmd->output.in, 1);
+            close(cmd->output.in);
+        }
         res = function(cmd->args);
         return (res);
     }

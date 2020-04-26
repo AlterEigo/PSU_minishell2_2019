@@ -24,10 +24,11 @@ extern char **environ;
 
 void print_invite(void)
 {
-    string_t *cwd = get_envvar("PWD");
+    string_t *cwd = get_cwd();
 
     if (!isatty(0))
         return;
+    str_print(cwd);
     str_free(&cwd);
     print_cchar("> ");
 }

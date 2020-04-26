@@ -47,8 +47,8 @@ int exec_try(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
         close(texas_oil->output.out);
     }
     if (cmd_is_piped(cmd)) {
-        close(cmd->output.out);
         dup2(cmd->output.in, 1);
+        close(cmd->output.in);
     }
     if (!is_a_path(cmd->name))
         path = find_in_path(cmd->name);
@@ -87,10 +87,8 @@ int eval_extern(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
     if (ret_pid == -1)
         return (errno);
     if (ret_pid == 0) {
-        if (cmd_is_piped(cmd)) {
-            dup2(cmd->output.in, 1);
-            close(cmd->output.in);
-        }
+        if (cmd_is_piped(cmd))
+            close(cmd->output.out);
         ret = exec_try(cmd, args, texas_oil);
         if (ret != 0)
             _exit(ret);

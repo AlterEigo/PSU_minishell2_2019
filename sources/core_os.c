@@ -63,10 +63,10 @@ static int set_current_path(string_t const *path)
 
     if (path == 0)
         return (-1);
-    current = get_envvar("PWD");
+    current = get_cwd();
     res = chdir(str_cstr(path));
     if (res != -1) {
-        tmp = fix_path_prefix(path, TRUE);
+        tmp = get_cwd();
         set_envvar("PWD", str_cstr(tmp));
         set_envvar("OLDPWD", str_cstr(current));
         str_free(&tmp);
