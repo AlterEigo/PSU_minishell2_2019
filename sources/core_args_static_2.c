@@ -32,6 +32,12 @@ static void print_fault_msg(int res)
         str_errprint(dump);
     str_free(&segfault);
     str_free(&floating);
-    str_free(&dump);
-    write(2, "\n", 1);
+    switch (res) {
+        case 134:
+        case 136:
+        case 139:
+        case 126:
+            write(2, "\n", 1);
+        break;
+    }
 }
