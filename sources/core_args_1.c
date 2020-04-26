@@ -19,6 +19,7 @@
 #include "core.h"
 
 #include "./core_args_static_1.c"
+#include "./core_args_static_2.c"
 
 builtin_ft get_builtin(string_t const *command)
 {
@@ -34,13 +35,13 @@ builtin_ft get_builtin(string_t const *command)
 
 list_t *extract_all_args(string_t const *argline)
 {
-    list_t *args = str_split(argline, ' ');
+    list_t *args = NULL;
     string_t *str = NULL;
     map_t *match = map_create(5, MB_STR);
     uint_t asize = list_len(args);
 
     if (argline == NULL)
-        return (NULL);
+        return (map_free(&match), NULL);
     for (uint_t i = 0; i < asize; i++) {
         str_free(&str);
         str = list_pull(args, list_begin(args));
@@ -93,6 +94,7 @@ int eval_prompt(string_t const *prompt)
         if (cmd == NULL)
             continue;
         res = execute_list_cmd(cmd, texas_oil);
+        print_fault_msg(res);
         if (texas_oil != NULL)
             free(texas_oil);
         texas_oil = cmd_is_piped(cmd) ? cmd : NULL;

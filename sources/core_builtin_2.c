@@ -46,7 +46,7 @@ string_t *find_in_path(string_t const *file)
     iterator_t it;
     string_t *cur = 0;
 
-    if (file == NULL)
+    if (file == NULL || path == NULL || str_len(path) < 1)
         return (0);
     it = (dirs == 0) ? it : list_begin(dirs);
     for (; !list_final(dirs, it); it = it_next(it)) {

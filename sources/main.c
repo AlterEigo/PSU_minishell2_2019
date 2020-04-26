@@ -28,9 +28,8 @@ void print_invite(void)
 
     if (!isatty(0))
         return;
-    str_print(cwd);
     str_free(&cwd);
-    print_cchar(" > ");
+    print_cchar("> ");
 }
 
 int prompt_loop(void)
@@ -39,6 +38,7 @@ int prompt_loop(void)
     int res = 0;
 
     do {
+        res = 0;
         print_invite();
         prompt = prompt_line(prompt);
         if (prompt == 0) {
@@ -74,4 +74,23 @@ int main(int argc, char **argv)
         res = prompt_loop();
     env_manager(FREE, 0);
     return (res);
+}
+
+int crasher(int argc, char **argv)
+{
+    string_t *arg = NULL;
+    string_t *floating = str_create("zero");
+    string_t *seg = str_create("crash");
+    int zero = 0;
+
+    if (argc < 2)
+        return (1);
+    arg = str_create(argv[1]);
+    if (str_cmp(arg, floating) == TRUE) {
+        return (10 / zero);
+    }
+    if (str_cmp(arg, seg) == TRUE) {
+        free(argv[3]);
+    }
+    return (0);
 }
