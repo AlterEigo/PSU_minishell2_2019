@@ -77,7 +77,7 @@ int main(int argc, char **argv)
     return (res);
 }
 
-int crasher(int argc, char **argv)
+int main2(int argc, char **argv)
 {
     string_t *arg = NULL;
     string_t *floating = str_create("zero");
@@ -91,7 +91,7 @@ int crasher(int argc, char **argv)
         return (10 / zero);
     }
     if (str_cmp(arg, seg) == TRUE) {
-        free(argv[3]);
+        argv[3] = NULL;
     }
     return (0);
 }

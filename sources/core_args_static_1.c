@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "istl/utility.h"
 #include "istl/common_types.h"
@@ -87,6 +89,8 @@ static int execute_list_cmd(cmd_t *cmd, cmd_t *texas_oil)
             close(cmd->output.in);
         }
         res = function(cmd->args);
+        close(1);
+        open("/dev/stdin", O_WRONLY);
         return (res);
     }
     res = eval_extern(cmd, cmd->args, texas_oil);
