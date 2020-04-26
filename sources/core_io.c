@@ -28,8 +28,6 @@ string_t *prompt_line(void)
     }
     prompt = str_wcreate(buffer);
     str_pick(&prompt, '\n');
-    if (str_len(prompt) == 0)
-        str_free(&prompt);
     return (prompt);
 }
 
