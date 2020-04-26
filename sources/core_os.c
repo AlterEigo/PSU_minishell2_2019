@@ -89,7 +89,7 @@ int change_sdir(string_t const *sdir)
     str_free(&dir);
     if (set_current_path(path) != 0)
         if (set_current_path(sdir) != 0) {
-            print_cerr("cd", 0);
+            print_cerr(str_cstr(sdir), 0);
             res = 84;
         }
     str_free(&dir);

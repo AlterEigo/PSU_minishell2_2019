@@ -69,7 +69,6 @@ const fnode_t REGEX_CMD[] = {
 };
 const fnode_t REGEX_CMD_ARG[] = {
     {.cset = RC_WILD, .ps = 0, .ns = 1, .fs = TRUE, .gwl = 1, .gwr = 2},
-    {.cset = "\\|;:!?()&~", .ps = 0, .ns = -1, .fs = FALSE, .gwl = 0, .gwr = 0},
     {.cset = " \t", .ps = 0, .ns = 0, .fs = FALSE, .gwl = 0, .gwr = 0},
     {.cset = "\'", .ps = 0, .ns = 2, .fs = FALSE, .gwl = 0, .gwr = 0},
     {.cset = "\"", .ps = 0, .ns = 3, .fs = FALSE, .gwl = 0, .gwr = 0},

@@ -94,11 +94,10 @@ int eval_extern(cmd_t const *cmd, list_t *args, cmd_t *texas_oil)
         ret = exec_try(cmd, args, texas_oil);
         if (ret != 0)
             _exit(ret);
-    } else {
-        if (cmd_is_piped(cmd))
-            close(cmd->output.in);
+    } else if (!cmd_is_piped(cmd)) {
         waitpid(ret_pid, &ret, WCONTINUED | WUNTRACED);
         return (WIFEXITED(ret) ? WEXITSTATUS(ret) : process_returned(ret));
-    }
-    return (84);
+    } else
+        close(cmd->output.in);
+    return (0);
 }
