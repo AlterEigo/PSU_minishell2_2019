@@ -42,15 +42,13 @@ int builtin_cd(list_t *args)
             print_cerr("cd", "No such file or directory");
         res = change_sdir(var);
         str_free(&var);
-    } else if (list_len(args) == 1) {
+    } else if (args != NULL && list_len(args) == 1) {
         arg = it_data(list_begin(args));
         if (str_cmp(arg, str_wcreate("-")) == TRUE)
             arg = get_envvar("OLDPWD");
         res = change_sdir(arg);
-    } else {
-        print_cerr("cd", "Too many arguments");
-        res = 84;
-    }
+    } else
+        return (print_cerr("cd", "Too many arguments"), 84);
     return (res);
 }
 
