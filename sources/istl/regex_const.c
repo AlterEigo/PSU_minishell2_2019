@@ -75,7 +75,7 @@ const fnode_t REGEX_CMD_ARG[] = {
     {.cset = RC_WILD, .ps = 1, .ns = 1, .fs = TRUE, .gwl = 1, .gwr = 2},
     {.cset = " \t", .ps = 1, .ns = 5, .fs = TRUE, .gwl = 0, .gwr = 0},
     {
-        .cset = "\\|;:!?()&~",
+        .cset = "\\|;!?()&~",
         .ps = 1, .ns = -1, .fs = FALSE, .gwl = 0, .gwr = 0
     },
     {.cset = RC_WILD, .ps = 2, .ns = 2, .fs = FALSE, .gwl = 2, .gwr = 3},
