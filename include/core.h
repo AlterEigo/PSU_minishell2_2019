@@ -7,6 +7,11 @@
 #ifndef IS_CORE_H_INCLUDED
 #define IS_CORE_H_INCLUDED
 
+#ifndef SETENV_ERR_1
+#define SETENV_ERR_1 \
+    "Variable name must contain alphanumeric characters" 
+#endif
+
 #include "istl/common_types.h"
 #include "env_map.h"
 #include "command_model.h"

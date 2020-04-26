@@ -20,10 +20,13 @@
 #include "istl/hash_table.h"
 #include "istl/utility.h"
 
-const fnode_t MS_KEY_VAL[] = {
+const fnode_t MS_VAL[] = {
     {.cset = RC_WILD, .ps = 0, .ns = -1, .fs = FALSE, .gwl = 0, .gwr = 0},
-    {.cset = CSET_ANUM, .ps = 0, .ns = 0, .fs = TRUE, .gwl = 1, .gwr = 2},
-    {.cset = "_", .ps = 0, .ns = 0, .fs = TRUE, .gwl = 1, .gwr = 2},
+    {.cset = CSET_ANUM, .ps = 0, .ns = 1, .fs = TRUE, .gwl = 1, .gwr = 2},
+    {.cset = "0123456789", .ps = 0, .ns = -1, .fs = FALSE, .gwl = 0, .gwr = 0},
+    {.cset = "_", .ps = 0, .ns = 1, .fs = TRUE, .gwl = 1, .gwr = 2},
+    {.cset = CSET_ANUM, .ps = 1, .ns = 1, .fs = TRUE, .gwl = 1, .gwr = 2},
+    {.cset = "_", .ps = 1, .ns = 1, .fs = TRUE, .gwl = 1, .gwr = 2},
     FNODE_NULL
 };
 
@@ -79,17 +82,16 @@ int builtin_setenv(list_t *args)
     string_t *key = 0;
     string_t *value = 0;
 
-    if (args == 0 || list_len(args) == 0) {
-        print_env();
-        return (0);
-    } else if (list_len(args) > 2) {
-        print_cerr("setenv", "Too many arguments");
-        return (84);
-    }
+    if (args == 0 || list_len(args) == 0)
+        return (print_env(), 0);
+    else if (list_len(args) > 2)
+        return (print_cerr("setenv", "Too many arguments"), 84);
     key = it_data(list_begin(args));
-    if (regex_extract(str_cstr(key), MS_KEY_VAL, NULL) != TRUE) {
-        print_cerr("setenv",
-                "Variable name must contain alphanumeric characters");
+    if (regex_extract(str_cstr(key), MS_VAL, NULL) != TRUE) {
+        if (str_contains("0123456789", str_cstr(key)[0]))
+            print_cerr("setenv", "Variable name must begin with a letter");
+        else
+            print_cerr("setenv", SETENV_ERR_1);
         return (1);
     }
     value = it_data(it_next(list_begin(args)));
