@@ -38,6 +38,8 @@ int builtin_cd(list_t *args)
 
     if (args == 0 || list_len(args) == 0) {
         var = get_envvar("HOME");
+        if (var == 0)
+            print_cerr("cd", "No such file or directory");
         res = change_sdir(var);
         str_free(&var);
     } else if (list_len(args) == 1) {
